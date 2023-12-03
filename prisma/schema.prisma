@@ -46,5 +46,5 @@ model Lambda {
   created_at DateTime @default(now())
   updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
 
-  @@map("reijo_lambda")
+  @@map("toki_lambda")
 }

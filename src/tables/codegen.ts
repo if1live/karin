@@ -10,5 +10,5 @@ export type Lambda = {
     updated_at: Generated<Timestamp>;
 };
 export type DB = {
-    reijo_lambda: Lambda;
+    toki_lambda: Lambda;
 };
