@@ -1,4 +1,5 @@
 import { FunctionDefinition, standalone } from "serverless-standalone";
+import * as http_admin from "./handlers/http_admin.js";
 import * as http_site from "./handlers/http_site.js";
 
 const definitions: FunctionDefinition[] = [
@@ -11,6 +12,11 @@ const definitions: FunctionDefinition[] = [
       { httpApi: { route: "ANY /robots.txt" } },
       { httpApi: { route: "ANY /static/{pathname+}" } },
     ],
+  },
+  {
+    name: "httpAdmin",
+    handler: http_admin.dispatch,
+    events: [{ httpApi: { route: "ANY /admin/{pathname+}" } }],
   },
 ];
 

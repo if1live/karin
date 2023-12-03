@@ -1,0 +1,34 @@
+{% layout "layouts/core.liquid" %}
+
+{% block body_content %}
+  <div class="ui left fixed vertical menu" style="width: 8rem;">
+    <a class="header item" href="/">reijo</a>
+    <a class="item" href="/admin/">root</a>
+    <a class="item" href="/admin/sys">sys</a>
+    <a class="item" href="/admin/lookup">lookup</a>
+  </div>
+
+  <div style="margin: 0 0.5rem 0 9rem; ">
+    <!-- flash 메세지에 의해서 메뉴가 움직이지 않는게 UX 측면에서 나을듯 -->
+    <!-- TODO: flash 어떻게 짜지? express 쓰긴 싫은데 -->
+    <div class="ui container">
+      {% assign levels = "error,warning,info,success,log" | split: "," %}
+      {% for level in levels %}
+        {% if flash[level] %}
+          <div class="ui {{level}} message">
+            <i class="close icon"></i>
+            <ul class="list">
+              {% for message in flash[level] %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <section class="ui fluid container">
+      {% block content %}BLOCK_CONTENT{% endblock %}
+    </section>
+  </div>
+{% endblock %}

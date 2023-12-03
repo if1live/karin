@@ -1,3 +1,4 @@
+import { Redis } from "ioredis";
 import { Kysely, MysqlDialect } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
 import { Liquid } from "liquidjs";
@@ -43,6 +44,11 @@ export const db = settings.aws.isAwsLambda
   ? createKysely_planetscale()
   : await createKysely_mysql();
 */
+
+export const redis = new Redis(settings.REDIS_URL, {
+  lazyConnect: true,
+});
+await redis.connect();
 
 export const engine = new Liquid({
   root: settings.viewPath,

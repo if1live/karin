@@ -60,6 +60,18 @@ functions:
           method: ANY
           path: /static/{pathname+}
 
+  httpAdmin:
+    handler: artifact/http_admin.dispatch
+    package:
+      patterns:
+        - artifact/http_admin.mjs*
+        - views/**/*
+        - static/**/*
+    events:
+      - httpApi:
+          method: ANY
+          path: /admin/{pathname+}
+
 custom:
   scriptHooks:
     before:package:createDeploymentArtifacts: pnpm artifact

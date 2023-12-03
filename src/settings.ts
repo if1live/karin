@@ -6,6 +6,7 @@ export const NODE_ENV = process.env.NODE_ENV || "production";
 export const STAGE = process.env.STAGE || "dev";
 
 export const DATABASE_URL = process.env.DATABASE_URL || "";
+export const REDIS_URL = process.env.REDIS_URL || "";
 
 // https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
 const filename = url.fileURLToPath(import.meta.url);

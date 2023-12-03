@@ -1,0 +1,17 @@
+{% layout "layouts/base_admin.liquid" %}
+
+{% block content %}
+  <h1>lookup</h1>
+
+  <form method="post" action="/admin/lookup/synchronize">
+    <input
+      type="text"
+      name="domain"
+      placeholder="domain" />
+
+    <button
+      type="submit"
+      name="action"
+      value="synchronize">synchronize</button>
+  </form>
+{% endblock %}

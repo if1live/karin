@@ -1,7 +1,7 @@
 import { APIGatewayProxyEventV2, Context } from "aws-lambda";
 import { handle } from "hono/aws-lambda";
 import * as R from "remeda";
-import * as apps from "../apps/apps.js";
+import * as apps from "./apps.js";
 
 const app = R.pipe(
   apps.initApp(),
