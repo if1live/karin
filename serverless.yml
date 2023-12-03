@@ -43,7 +43,7 @@ functions:
     url: true
     package:
       patterns:
-        - artifact/handlers.mjs*
+        - artifact/http_site.mjs*
         - views/**/*
         - static/**/*
     events:
