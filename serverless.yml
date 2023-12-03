@@ -35,10 +35,15 @@ provider:
   iam:
     role:
       statements:
+        # https://docs.aws.amazon.com/lambda/latest/dg/access-control-identity-based.html
+        - Effect: "Allow"
+          Action:
+            - lambda:ListFunctions
+          Resource:
+            - "*"
         - Effect: "Allow"
           Action:
             - lambda:ListFunctionUrlConfigs
-            - lambda:ListFunctions
           Resource:
             - arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:*
 
