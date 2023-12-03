@@ -1,3 +1,4 @@
+import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
@@ -28,6 +29,8 @@ export function initApp() {
   app.get("/robots.txt", async (c) => {
     return c.text(robotsTxt);
   });
+
+  app.use("/static/*", serveStatic({ root: "./" }));
 
   app.get("/", async (c) => {
     return c.redirect(`${prefix_site}/`);
