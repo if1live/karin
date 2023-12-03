@@ -1,2 +1,2 @@
-export * as lookupController from "./controller.js";
-export * as lookupAdmin from "./admin.js";
+export * as lookupController from "./LookupController.js";
+export * as lookupAdmin from "./LookupAdmin.js";

@@ -8,5 +8,6 @@
   "editor.codeActionsOnSave": {
     "quickfix.biome": true,
     "source.organizeImports.biome": true
-  }
+  },
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }
