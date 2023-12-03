@@ -1,0 +1,14 @@
+{% layout "layouts/base_site.liquid" %}
+
+{% block content %}
+  <h1>{{ error.name }}</h1>
+  <p>
+    {{ error.message }}
+  </p>
+
+  <pre>{{ error.stack }}</pre>
+
+  {% comment %}
+  보안은 나중에 생각. 환경변수 기반의 분기가 필요할듯
+  {% endcomment %}
+{% endblock %}

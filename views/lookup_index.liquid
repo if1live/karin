@@ -1,0 +1,18 @@
+{% layout "layouts/base_site.liquid" %}
+
+{% block content %}
+  <h1>lookup</h1>
+  <p>
+    <form method="post" action="/r/lookup/synchronize">
+      <input
+        type="text"
+        name="domain"
+        placeholder="domain" />
+
+      <button
+        type="submit"
+        name="action"
+        value="synchronize">synchronize</button>
+    </form>
+  </p>
+{% endblock %}

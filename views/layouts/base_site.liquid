@@ -1,0 +1,15 @@
+{% layout "layouts/core.liquid" %}
+
+{% block body_content %}
+  <header class="ui top small menu">
+    <div class="ui container">
+      <div class="header item">
+        <a href="/">Reijo</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="ui container">
+    {% block content %}MY_DEFAULT_CONTENT{% endblock %}
+  </section>
+{% endblock %}
