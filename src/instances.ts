@@ -1,3 +1,4 @@
+import { LambdaClient } from "@aws-sdk/client-lambda";
 import { Redis } from "ioredis";
 import { Kysely, MysqlDialect } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
@@ -55,3 +56,22 @@ export const engine = new Liquid({
   extname: ".liquid",
   cache: settings.NODE_ENV === "production",
 });
+
+function createLambdaClient_prod(): LambdaClient {
+  const aws = settings.aws;
+  return new LambdaClient({
+    region: aws.region,
+    credentials: aws.credentials,
+  });
+}
+
+function createLambdaClient_localhost(): LambdaClient {
+  return new LambdaClient({
+    region: settings.aws.region,
+  });
+}
+
+export const lambdaClient =
+  settings.NODE_ENV === "development"
+    ? createLambdaClient_localhost()
+    : createLambdaClient_prod();

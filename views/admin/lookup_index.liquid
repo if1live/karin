@@ -3,15 +3,23 @@
 {% block content %}
   <h1>lookup</h1>
 
-  <form method="post" action="/admin/lookup/synchronize">
+  <form method="post" action="/admin/lookup/synchronize/list">
+    <button
+      type="submit"
+      name="action"
+      value="synchronize">synchronize:list</button>
+  </form>
+
+  <form method="post" action="/admin/lookup/synchronize/url">
     <input
       type="text"
-      name="domain"
-      placeholder="domain" />
+      name="functionName"
+      value="ayane-dev-http"
+      placeholder="sample-function-name" />
 
     <button
       type="submit"
       name="action"
-      value="synchronize">synchronize</button>
+      value="synchronize">synchronize:url</button>
   </form>
 {% endblock %}

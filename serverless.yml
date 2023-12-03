@@ -32,6 +32,16 @@ provider:
     DATABASE_URL: ${env:DATABASE_URL}
     REDIS_URL: ${env:REDIS_URL}
 
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - lambda:ListFunctionUrlConfigs
+            - lambda:ListFunctions
+          Resource:
+            - arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:*
+
 package:
   individually: true
   patterns:

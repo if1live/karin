@@ -1,6 +1,6 @@
-import * as R from "remeda";
 import { APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { handle } from "hono/aws-lambda";
+import * as R from "remeda";
 import * as apps from "./apps.js";
 
 const app = R.pipe(
