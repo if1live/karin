@@ -49,12 +49,11 @@ export function decorateApp_site(app: Hono): Hono {
 
   app.route(`${prefix}${lookupController.resource}`, lookupController.app);
 
-  const fn_index = async (c: Context) => {
+  app.get(`${prefix}`, async (c) => c.redirect(`${prefix}/`));
+  app.get(`${prefix}/`, async (c) => {
     const text = await engine.renderFile("index", {});
     return c.html(text);
-  };
-  app.get(`${prefix}`, fn_index);
-  app.get(`${prefix}/`, fn_index);
+  });
 
   return app;
 }
@@ -66,12 +65,11 @@ export function decorateApp_admin(app: Hono): Hono {
   app.route(`${prefix}${lookupAdmin.resource}`, lookupAdmin.app);
   app.route(`${prefix}${queueAdmin.resource}`, queueAdmin.app);
 
-  const fn_index = async (c: Context) => {
+  app.get(`${prefix}`, async (c) => c.redirect(`${prefix}/`));
+  app.get(`${prefix}/`, async (c) => {
     const text = await engine.renderFile("admin/index", {});
     return c.html(text);
-  };
-  app.get(`${prefix}`, fn_index);
-  app.get(`${prefix}/`, fn_index);
+  });
 
   return app;
 }
