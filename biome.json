@@ -13,7 +13,6 @@
       ".serverless/**/*",
       "artifact/**/*",
       "dist/**/*",
-      "etc/**/*",
       "biome.json",
       "codegen.ts"
     ]

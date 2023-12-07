@@ -22,10 +22,6 @@ const credentials: Credentials | undefined =
 export const aws = Object.freeze({
   isAwsLambda: !!process.env.LAMBDA_TASK_ROOT,
   region: process.env.AWS_REGION || "ap-northeast-1",
+  accountId: process.env.AWS_ACCOUNT_ID || "123456789012",
   credentials,
-
-  // account id는 환경변수에서 얻을수 없다. context를 뜯어서 빼내기
-  extractAccountId(functionArn: string): string {
-    return functionArn.split(":")[4] ?? "123456789012";
-  },
 });

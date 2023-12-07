@@ -58,19 +58,21 @@ export const engine = new Liquid({
   cache: settings.NODE_ENV === "production",
 });
 
-function createLambdaClient_prod(): LambdaClient {
+type LambdaClientFn = () => LambdaClient;
+
+const createLambdaClient_prod: LambdaClientFn = () => {
   const aws = settings.aws;
   return new LambdaClient({
     region: aws.region,
     credentials: aws.credentials,
   });
-}
+};
 
-function createLambdaClient_localhost(): LambdaClient {
+const createLambdaClient_localhost: LambdaClientFn = () => {
   return new LambdaClient({
     region: settings.aws.region,
   });
-}
+};
 
 export const lambdaClient =
   settings.NODE_ENV === "development"
@@ -82,27 +84,40 @@ const sqsEndpoint_prod = `https://sqs.${settings.aws.region}.amazonaws.com`;
 const sqsEndpoint =
   settings.NODE_ENV === "production" ? sqsEndpoint_prod : sqsEndpoint_localhost;
 
-function createSqsClient_prod(): SQSClient {
+type SqsClientFn = () => SQSClient;
+
+const createSqsClient_prod: SqsClientFn = () => {
   const aws = settings.aws;
   return new SQSClient({
     region: aws.region,
     credentials: aws.credentials,
   });
-}
+};
 
-function createSqsClient_localhost(): SQSClient {
+const createSqsClient_localhost: SqsClientFn = () => {
   const aws = settings.aws;
   return new SQSClient({
     region: aws.region,
     endpoint: sqsEndpoint_localhost,
   });
-}
+};
 
-export const sqsClient =
+export const sqsClient: SQSClient =
   settings.NODE_ENV === "development"
     ? createSqsClient_localhost()
     : createSqsClient_prod();
 
-export function createQueueUrl(queueName: string) {
+type CreateQueueUrlFn = (queueName: string) => string;
+
+const createQueueUrl_localhost: CreateQueueUrlFn = (queueName) => {
   return `${sqsEndpoint}/queue/${queueName}`;
-}
+};
+
+const createQueueUrl_prod: CreateQueueUrlFn = (queueName) => {
+  return `${sqsEndpoint}/${settings.aws.accountId}/${queueName}`;
+};
+
+export const createQueueUrl =
+  settings.NODE_ENV === "production"
+    ? createQueueUrl_prod
+    : createQueueUrl_localhost;

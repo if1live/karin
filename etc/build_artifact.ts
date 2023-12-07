@@ -1,5 +1,5 @@
-import esbuild from "esbuild";
 import fs from "node:fs/promises";
+import esbuild from "esbuild";
 
 const banner_js_esm = `
 import { createRequire as topLevelCreateRequire } from 'module';
@@ -24,7 +24,11 @@ const opts_common: esbuild.BuildOptions = {
   sourcemap: true,
   treeShaking: true,
   platform: "node",
-  external: [],
+  external: [
+    "@aws-sdk/client-apigatewaymanagementapi",
+    "@aws-sdk/client-lambda",
+    "@aws-sdk/client-sqs",
+  ],
   target: "node20",
   format: "esm",
   mainFields: ["module", "main"],
@@ -41,9 +45,11 @@ function readableSize(val: number) {
 async function mybuild(opts: esbuild.BuildOptions) {
   const result = await esbuild.build(opts);
 
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
   const fp_bundle = opts.outfile!;
-  const fp_sourcemap = fp_bundle + ".map";
+  const fp_sourcemap = `${fp_bundle}.map`;
 
+  // biome-ignore lint/correctness/noConstantCondition: <explanation>
   if (true) {
     const stat_bundle = await fs.stat(fp_bundle);
     console.log(`${fp_bundle}\t${readableSize(stat_bundle.size)}MB`);
@@ -62,9 +68,10 @@ const build = async (
   filename: string,
   opts: esbuild.BuildOptions,
 ) => {
-  const fp_outfile = opts.format === "esm"
-    ? `./artifact/${filename.replace(".js", ".mjs")}`
-    : `./artifact/${filename}`;
+  const fp_outfile =
+    opts.format === "esm"
+      ? `./artifact/${filename.replace(".js", ".mjs")}`
+      : `./artifact/${filename}`;
 
   await mybuild({
     ...opts,

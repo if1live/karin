@@ -26,6 +26,8 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000"
 
+    AWS_ACCOUNT_ID: ${aws:accountId}
+
     STAGE: ${self:provider.stage}
     NODE_ENV: production
 
@@ -98,6 +100,9 @@ functions:
         - views/**/*
         - static/**/*
     events:
+      - httpApi:
+          method: ANY
+          path: /admin
       - httpApi:
           method: ANY
           path: /admin/{pathname+}
