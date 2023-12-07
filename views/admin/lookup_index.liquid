@@ -22,4 +22,14 @@
       name="action"
       value="synchronize">synchronize:url</button>
   </form>
+
+  <form method="post" action="/admin/lookup/synchronize/event">
+    <input
+      type="text"
+      name="functionName"
+      value="toki-dev-sqsSimple"
+      placeholder="sample-function-name" />
+
+    <button type="submit">synchronize:event</button>
+  </form>
 {% endblock %}

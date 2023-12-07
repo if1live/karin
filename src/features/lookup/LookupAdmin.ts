@@ -1,4 +1,6 @@
 import {
+  ListEventSourceMappingsCommand,
+  ListFunctionEventInvokeConfigsCommand,
   ListFunctionUrlConfigsCommand,
   ListFunctionsCommand,
 } from "@aws-sdk/client-lambda";
@@ -100,6 +102,26 @@ export class LookupAdmin {
       payload: result,
     };
   }
+
+  async synchronize_event(
+    req: MyRequest<SynchronizeUrlInput>,
+  ): Promise<MyResponse> {
+    const { input } = req;
+
+    const output = await lambdaClient.send(
+      new ListEventSourceMappingsCommand({
+        FunctionName: input.functionName,
+        MaxItems: 100,
+      }),
+    );
+
+    console.log(output);
+
+    return {
+      tag: "json",
+      payload: output,
+    };
+  }
 }
 
 const admin = new LookupAdmin();
@@ -122,5 +144,14 @@ app.post("/synchronize/url", async (c) => {
 
   const req = new MyRequest(input);
   const resp = await admin.synchronize_url(req);
+  return MyResponse.respond(c, resp);
+});
+
+app.post("/synchronize/event", async (c) => {
+  const body = await c.req.parseBody();
+  const input = SynchronizeUrlInput.parse(body);
+
+  const req = new MyRequest(input);
+  const resp = await admin.synchronize_event(req);
   return MyResponse.respond(c, resp);
 });

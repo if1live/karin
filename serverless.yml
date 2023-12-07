@@ -46,6 +46,7 @@ provider:
         - Effect: "Allow"
           Action:
             - lambda:ListFunctionUrlConfigs
+            - lambda:ListEventSourceMappings
           Resource:
             - arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:*
         - Effect: "Allow"
