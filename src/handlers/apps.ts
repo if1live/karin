@@ -2,7 +2,12 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
-import { lookupAdmin, lookupController, sysAdmin } from "../features/index.js";
+import {
+  lookupAdmin,
+  lookupController,
+  queueAdmin,
+  sysAdmin,
+} from "../features/index.js";
 import { engine } from "../instances.js";
 import { errorHandler } from "../system/errors.js";
 
@@ -59,6 +64,7 @@ export function decorateApp_admin(app: Hono): Hono {
 
   app.route(`${prefix}${sysAdmin.resource}`, sysAdmin.app);
   app.route(`${prefix}${lookupAdmin.resource}`, lookupAdmin.app);
+  app.route(`${prefix}${queueAdmin.resource}`, queueAdmin.app);
 
   const fn_index = async (c: Context) => {
     const text = await engine.renderFile("admin/index", {});

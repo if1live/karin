@@ -76,4 +76,5 @@ const build = async (
 await Promise.allSettled([
   build("./src/handlers/http_site.js", "http_site.js", opts_common),
   build("./src/handlers/http_admin.js", "http_admin.js", opts_common),
+  build("./src/handlers/sqs_simple.js", "sqs_simple.js", opts_common),
 ]);

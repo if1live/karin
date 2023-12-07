@@ -1,4 +1,5 @@
 import { LambdaClient } from "@aws-sdk/client-lambda";
+import { SQSClient } from "@aws-sdk/client-sqs";
 import { Redis } from "ioredis";
 import { Kysely, MysqlDialect } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
@@ -75,3 +76,33 @@ export const lambdaClient =
   settings.NODE_ENV === "development"
     ? createLambdaClient_localhost()
     : createLambdaClient_prod();
+
+const sqsEndpoint_localhost = "http://127.0.0.1:9324";
+const sqsEndpoint_prod = `https://sqs.${settings.aws.region}.amazonaws.com`;
+const sqsEndpoint =
+  settings.NODE_ENV === "production" ? sqsEndpoint_prod : sqsEndpoint_localhost;
+
+function createSqsClient_prod(): SQSClient {
+  const aws = settings.aws;
+  return new SQSClient({
+    region: aws.region,
+    credentials: aws.credentials,
+  });
+}
+
+function createSqsClient_localhost(): SQSClient {
+  const aws = settings.aws;
+  return new SQSClient({
+    region: aws.region,
+    endpoint: sqsEndpoint_localhost,
+  });
+}
+
+export const sqsClient =
+  settings.NODE_ENV === "development"
+    ? createSqsClient_localhost()
+    : createSqsClient_prod();
+
+export function createQueueUrl(queueName: string) {
+  return `${sqsEndpoint}/queue/${queueName}`;
+}

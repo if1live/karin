@@ -14,6 +14,12 @@ services:
     ports:
       - 6379:6379
 
+  sqs:
+    image: softwaremill/elasticmq-native:1.5.2
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+
   adminer:
     image: adminer:latest
     ports:

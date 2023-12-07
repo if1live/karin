@@ -1,0 +1,17 @@
+{% layout "layouts/base_admin.liquid" %}
+
+{% block content %}
+  <h1>queue</h1>
+
+  <form method="post" action="/admin/queue/enqueue">
+    <button type="submit">enqueue</button>
+  </form>
+
+  <form method="post" action="/admin/queue/purge">
+    <button type="submit">purge</button>
+  </form>
+
+  <form method="post" action="/admin/queue/peek">
+    <button type="submit">peek</button>
+  </form>
+{% endblock %}
