@@ -54,15 +54,6 @@ provider:
             - lambda:InvokeFunction
           Resource:
             - arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:toki-${self:provider.stage}-*
-        - Effect: "Allow"
-          Action:
-            - sqs:SendMessage
-            - sqs:PurgeQueue
-            - sqs:DeleteMessage
-            - sqs:DeleteMessageBatch
-            - sqs:ReceiveMessage
-          Resource:
-            - arn:aws:sqs:${self:provider.region}:${aws:accountId}:toki-simple-${self:provider.stage}
 
 package:
   individually: true
@@ -107,26 +98,6 @@ functions:
       - httpApi:
           method: ANY
           path: /admin/{pathname+}
-
-  sqsSimple:
-    handler: artifact/sqs_simple.dispatch
-    package:
-      patterns:
-        - artifact/sqs_simple.mjs*
-    events:
-      - sqs:
-          arn: arn:aws:sqs:${self:provider.region}:${aws:accountId}:toki-simple-${self:provider.stage}
-          batchSize: 1
-          enabled: false
-
-resources:
-  Resources:
-    SQSQueueSimple:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: toki-simple-${self:provider.stage}
-        VisibilityTimeout: 60
-        MessageRetentionPeriod: 1209600 # 14 days
 
 custom:
   scriptHooks:

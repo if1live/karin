@@ -1,12 +1,8 @@
 import { LambdaClient } from "@aws-sdk/client-lambda";
-import { SQSClient } from "@aws-sdk/client-sqs";
-import { Redis } from "ioredis";
 import { Kysely, MysqlDialect } from "kysely";
-import { PlanetScaleDialect } from "kysely-planetscale";
 import { Liquid } from "liquidjs";
 import type { default as Mysql } from "mysql2";
 import * as settings from "./settings.js";
-import { DB } from "./tables/index.js";
 
 /*
 const createMysqlPool = async (url: URL): Promise<Mysql.Pool> => {
@@ -47,11 +43,6 @@ export const db = settings.aws.isAwsLambda
   : await createKysely_mysql();
 */
 
-export const redis = new Redis(settings.REDIS_URL, {
-  lazyConnect: true,
-});
-await redis.connect();
-
 export const engine = new Liquid({
   root: settings.viewPath,
   extname: ".liquid",
@@ -79,45 +70,3 @@ export const lambdaClient =
     ? createLambdaClient_localhost()
     : createLambdaClient_prod();
 
-const sqsEndpoint_localhost = "http://127.0.0.1:9324";
-const sqsEndpoint_prod = `https://sqs.${settings.aws.region}.amazonaws.com`;
-const sqsEndpoint =
-  settings.NODE_ENV === "production" ? sqsEndpoint_prod : sqsEndpoint_localhost;
-
-type SqsClientFn = () => SQSClient;
-
-const createSqsClient_prod: SqsClientFn = () => {
-  const aws = settings.aws;
-  return new SQSClient({
-    region: aws.region,
-    credentials: aws.credentials,
-  });
-};
-
-const createSqsClient_localhost: SqsClientFn = () => {
-  const aws = settings.aws;
-  return new SQSClient({
-    region: aws.region,
-    endpoint: sqsEndpoint_localhost,
-  });
-};
-
-export const sqsClient: SQSClient =
-  settings.NODE_ENV === "development"
-    ? createSqsClient_localhost()
-    : createSqsClient_prod();
-
-type CreateQueueUrlFn = (queueName: string) => string;
-
-const createQueueUrl_localhost: CreateQueueUrlFn = (queueName) => {
-  return `${sqsEndpoint}/queue/${queueName}`;
-};
-
-const createQueueUrl_prod: CreateQueueUrlFn = (queueName) => {
-  return `${sqsEndpoint}/${settings.aws.accountId}/${queueName}`;
-};
-
-export const createQueueUrl =
-  settings.NODE_ENV === "production"
-    ? createQueueUrl_prod
-    : createQueueUrl_localhost;

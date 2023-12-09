@@ -1,8 +1,6 @@
 import { FunctionDefinition, standalone } from "serverless-standalone";
 import * as http_admin from "./handlers/http_admin.js";
 import * as http_site from "./handlers/http_site.js";
-import * as sqs_simple from "./handlers/sqs_simple.js";
-import * as settings from "./settings.js";
 
 /*
 SQS
@@ -31,24 +29,10 @@ const definitions: FunctionDefinition[] = [
     handler: http_admin.dispatch,
     events: [{ httpApi: { route: "ANY /admin/{pathname+}" } }],
   },
-  {
-    name: "sqs_simple",
-    handler: sqs_simple.dispatch,
-    events: [
-      {
-        sqs: {
-          queueName: `toki-simple-${settings.STAGE}`,
-          batchSize: 1,
-          enabled: false,
-        },
-      },
-    ],
-  },
 ];
 
 const options = {
   httpApi: { port: 3000 },
-  sqs: { url: "http://127.0.0.1:9324" },
 };
 
 const inst = standalone({

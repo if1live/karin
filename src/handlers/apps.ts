@@ -5,7 +5,6 @@ import { HTTPException } from "hono/http-exception";
 import {
   lookupAdmin,
   lookupController,
-  queueAdmin,
   sysAdmin,
 } from "../features/index.js";
 import { engine } from "../instances.js";
@@ -63,7 +62,6 @@ export function decorateApp_admin(app: Hono): Hono {
 
   app.route(`${prefix}${sysAdmin.resource}`, sysAdmin.app);
   app.route(`${prefix}${lookupAdmin.resource}`, lookupAdmin.app);
-  app.route(`${prefix}${queueAdmin.resource}`, queueAdmin.app);
 
   app.get(`${prefix}`, async (c) => c.redirect(`${prefix}/`));
   app.get(`${prefix}/`, async (c) => {
