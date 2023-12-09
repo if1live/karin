@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-lambda";
 import { Hono } from "hono";
 import { z } from "zod";
-import { lambdaClient } from "../../instances.js";
+import { lambdaClient } from "../../instances/index.js";
 import { MyRequest, MyResponse } from "../../system/index.js";
 
 export const resource = "/lookup" as const;

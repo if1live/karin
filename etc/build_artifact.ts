@@ -24,9 +24,7 @@ const opts_common: esbuild.BuildOptions = {
   sourcemap: true,
   treeShaking: true,
   platform: "node",
-  external: [
-    "@aws-sdk/client-lambda",
-  ],
+  external: ["@aws-sdk/client-lambda", "better-sqlite3", "mysql2"],
   target: "node20",
   format: "esm",
   mainFields: ["module", "main"],

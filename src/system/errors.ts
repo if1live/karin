@@ -1,6 +1,6 @@
 import { ErrorHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { engine } from "../instances.js";
+import { engine } from "../instances/index.js";
 
 type StatusCodeModel = {
   status?: number;

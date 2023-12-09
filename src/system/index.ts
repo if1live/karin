@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { engine } from "../instances.js";
+import { engine } from "../instances/index.js";
 
 export * from "./errors.js";
 
@@ -43,7 +43,8 @@ export const MyResponse = {
         return c.html(html, r.status, r.headers);
       }
       case "json": {
-        return c.json(r.payload, r.status, r.headers);
+        const payload = r.payload as any;
+        return c.json(payload, r.status, r.headers);
       }
       case "text": {
         return c.text(r.text, r.status, r.headers);

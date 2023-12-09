@@ -2,12 +2,8 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
-import {
-  lookupAdmin,
-  lookupController,
-  sysAdmin,
-} from "../features/index.js";
-import { engine } from "../instances.js";
+import { lookupAdmin, lookupController, sysAdmin } from "../features/index.js";
+import { engine } from "../instances/index.js";
 import { errorHandler } from "../system/errors.js";
 
 const robotsTxt = `

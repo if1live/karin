@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { engine } from "../../instances.js";
+import { engine } from "../../instances/index.js";
 
 export const resource = "/sys" as const;
 export const app = new Hono();
