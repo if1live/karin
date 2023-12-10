@@ -2,8 +2,9 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
-import { lookupAdmin, lookupController, sysAdmin } from "./features/index.js";
+import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import { queueAdmin, queueController } from "./features/queue/index.js";
+import { sysAdmin } from "./features/sys/index.js";
 import { engine } from "./instances/index.js";
 import { errorHandler } from "./system/errors.js";
 

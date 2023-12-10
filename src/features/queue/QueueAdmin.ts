@@ -5,7 +5,6 @@ import { Hono } from "hono";
 import { channel, lambdaClient } from "../../instances/index.js";
 import * as settings from "../../settings.js";
 import { MyRequest, MyResponse } from "../../system/index.js";
-import { LookupAdmin } from "../lookup/LookupAdmin.js";
 import { eventSourceMapping } from "./core.js";
 
 export const resource = "/queue" as const;
@@ -23,7 +22,7 @@ export class QueueAdmin {
   }
 }
 
-const admin = new LookupAdmin();
+const admin = new QueueAdmin();
 
 app.get("", async (c) => {
   const req = new MyRequest({});
@@ -79,15 +78,20 @@ channel.consume(
       Records: [record],
     };
 
-    // console.log(" [x] Received %s", msg.content.toString());
-    const output = await lambdaClient.send(
-      new InvokeCommand({
-        FunctionName: eventSourceMapping.lambda,
-        Payload: JSON.stringify(event),
-        InvocationType: "Event",
-      }),
-    );
-    console.log(output);
+    try {
+      // console.log(" [x] Received %s", msg.content.toString());
+      const output = await lambdaClient.send(
+        new InvokeCommand({
+          FunctionName: eventSourceMapping.lambda,
+          Payload: JSON.stringify(event),
+          InvocationType: "Event",
+        }),
+      );
+      console.log(output);
+    } catch (e) {
+      // TODO: 적당한 에러처리 필요
+      console.error(e);
+    }
   },
   {
     noAck: true,

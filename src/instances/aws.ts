@@ -11,11 +11,6 @@ const createLambdaClient_prod: LambdaClientFn = () => {
 };
 
 const createLambdaClient_localhost: LambdaClientFn = () => {
-  console.log({
-    endpoint: settings.LAMBDA_URL,
-    region: settings.AWS_REGION,
-    credentials: settings.AWS_CREDENTIALS,
-  });
   return new LambdaClient({
     endpoint: settings.LAMBDA_URL,
     region: settings.AWS_REGION,
