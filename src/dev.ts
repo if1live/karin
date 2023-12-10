@@ -6,7 +6,7 @@ import * as http_site from "./handlers/http_site.js";
 SQS
 aws sqs --endpoint-url http://localhost:9324 \
 	send-message \
-	--queue-url http://localhost:9324/queue/toki-simple \
+	--queue-url http://localhost:9324/queue/miyako-simple \
 	--message-body 'first'
 
 WebSocket

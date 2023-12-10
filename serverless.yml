@@ -1,4 +1,4 @@
-service: toki
+service: miyako
 
 useDotenv: true
 
@@ -49,11 +49,6 @@ provider:
             - lambda:ListFunctionUrlConfigs
           Resource:
             - arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:*
-        - Effect: "Allow"
-          Action:
-            - lambda:InvokeFunction
-          Resource:
-            - arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:toki-${self:provider.stage}-*
 
 package:
   individually: true

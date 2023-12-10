@@ -5,7 +5,7 @@ services:
     image: mysql:8.0-debian
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_DATABASE: toki_dev
+      MYSQL_DATABASE: miyako_dev
     ports:
       - 3306:3306
 

@@ -68,7 +68,7 @@ export const createKysely = <T>(dialect: Dialect): Kysely<T> => {
     dialect,
     plugins: [
       new ParseJSONResultsPlugin(),
-      new TablePrefixPlugin({ prefix: "toki" }),
+      new TablePrefixPlugin({ prefix: "miyako" }),
     ],
     // log: ["query", "error"],
   });
