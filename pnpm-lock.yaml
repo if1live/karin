@@ -8,6 +8,9 @@ dependencies:
   '@aws-sdk/client-lambda':
     specifier: ^3.470.0
     version: 3.470.0
+  '@aws-sdk/util-arn-parser':
+    specifier: ^3.465.0
+    version: 3.465.0
   '@hono/node-server':
     specifier: ^1.3.1
     version: 1.3.1
@@ -492,6 +495,13 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.7.0
+      tslib: 2.6.2
+    dev: false
+
+  /@aws-sdk/util-arn-parser@3.465.0:
+    resolution: {integrity: sha512-zOJ82vzDJFqBX9yZBlNeHHrul/kpx/DCoxzW5UBbZeb26kfV53QhMSoEmY8/lEbBqlqargJ/sgRC845GFhHNQw==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
       tslib: 2.6.2
     dev: false
 

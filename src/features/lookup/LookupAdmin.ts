@@ -47,7 +47,6 @@ export class LookupAdmin {
 
     const first = founds[0];
     const result = first ? await FunctionUrlService.synchronize(first) : null;
-    console.log(result);
 
     // TODO: htmx가 더 적절할듯
     return {
@@ -66,7 +65,6 @@ export class LookupAdmin {
     const result = first
       ? await EventSourceMappingService.synchronize(first)
       : null;
-    console.log(result);
 
     return {
       tag: "json",
