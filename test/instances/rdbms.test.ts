@@ -1,8 +1,15 @@
 import { strict as assert } from "node:assert";
 import { after, before, describe, it, skip } from "node:test";
-import { Generated, Kysely, RawBuilder, SqliteAdapter, sql } from "kysely";
+import {
+  Generated,
+  Kysely,
+  ParseJSONResultsPlugin,
+  RawBuilder,
+  SqliteAdapter,
+  sql,
+} from "kysely";
 import { createKysely, selectDialect } from "../../src/instances/rdbms.js";
-import { Timestamp } from "../../src/tables.js";
+import { Timestamp } from "../../src/tables/tables.js";
 
 /**
  * json example
@@ -72,7 +79,11 @@ interface Database {
 
 describe("rdbms", async () => {
   const dialect = await selectDialect()();
-  const db = createKysely<Database>(dialect);
+  // 플러그인으로 테스트 꺠지는거 피하려고 직접 객체 만듬
+  const db = new Kysely<Database>({
+    dialect,
+    plugins: [new ParseJSONResultsPlugin()],
+  });
 
   before(async () => {});
 

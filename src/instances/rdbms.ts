@@ -1,4 +1,5 @@
 import {
+  CamelCasePlugin,
   Dialect,
   Kysely,
   MysqlDialect,
@@ -8,7 +9,7 @@ import {
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
 import { PoolOptions } from "mysql2";
 import * as settings from "../settings.js";
-import { DB } from "../tables.js";
+import { DB } from "../tables/index.js";
 
 type DialectFn = () => Promise<Dialect>;
 
@@ -65,6 +66,7 @@ export const createKysely = <T>(dialect: Dialect): Kysely<T> => {
     dialect,
     plugins: [
       new ParseJSONResultsPlugin(),
+      new CamelCasePlugin(),
       new TablePrefixPlugin({ prefix: "miyako" }),
     ],
     // log: ["query", "error"],
