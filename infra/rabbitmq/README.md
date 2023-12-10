@@ -2,7 +2,7 @@
 
 ```bash
 # 배포
-fly deploy
+fly deploy --ha=false
 
 # 권한 설정
 fly secrets set RABBITMQ_DEFAULT_USER=TODO_admin
