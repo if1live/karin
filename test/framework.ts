@@ -14,7 +14,7 @@ const prepare_functionDefinition = async (db: Kysely<DB>) => {
     .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
     .addColumn("functionName", "varchar(255)", (col) => col.notNull().unique())
     .addColumn("functionArn", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("data", "json", (col) => col.notNull())
+    .addColumn("payload", "json", (col) => col.notNull())
     .execute();
 };
 
@@ -24,7 +24,7 @@ const prepare_functionUrl = async (db: Kysely<DB>) => {
     .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
     .addColumn("functionArn", "varchar(255)", (col) => col.notNull().unique())
     .addColumn("functionUrl", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("data", "json", (col) => col.notNull())
+    .addColumn("payload", "json", (col) => col.notNull())
     .execute();
 };
 
@@ -37,7 +37,7 @@ const prepare_eventSourceMapping = async (db: Kysely<DB>) => {
       col.notNull().unique(),
     )
     .addColumn("functionArn", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("data", "json", (col) => col.notNull())
+    .addColumn("payload", "json", (col) => col.notNull())
     .execute();
 };
 

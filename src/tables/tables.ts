@@ -15,7 +15,7 @@ export type FunctionDefinition = {
   id: Generated<number>;
   functionName: string;
   functionArn: string;
-  data: Json;
+  payload: Json;
 };
 
 /**
@@ -30,7 +30,7 @@ export type FunctionUrl = {
   /** @example "https://abcdefghijk.lambda-url.ap-northeast-1.on.aws/" */
   functionUrl: string;
 
-  data: Json;
+  payload: Json;
 };
 
 /**
@@ -48,7 +48,7 @@ export type EventSourceMapping = {
   /** @example "arn:aws:lambda:ap-northeast-1:123456789012:function:toki-example-dev-sqsMain" */
   functionArn: string;
 
-  data: Json;
+  payload: Json;
 };
 
 export type DB = {
