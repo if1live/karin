@@ -1,0 +1,31 @@
+app = "miyako-rabbitmq"
+primary_region = "nrt"
+
+[build]
+
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory_mb = 256
+
+[[services]]
+protocol = "tcp"
+internal_port = 5672
+
+[[services.tcp_checks]]
+interval = "15s"
+timeout = "1m0s"
+grace_period = "1s"
+
+[[services]]
+protocol = "tcp"
+internal_port = 15672
+
+[[services.ports]]
+port = 15672
+handlers = ["tls", "http"]
+
+[[services.tcp_checks]]
+interval = "15s"
+timeout = "1m0s"
+grace_period = "1s"
