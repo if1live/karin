@@ -24,7 +24,7 @@ const opts_common: esbuild.BuildOptions = {
   sourcemap: true,
   treeShaking: true,
   platform: "node",
-  external: ["@aws-sdk/client-lambda", "better-sqlite3", "mysql2"],
+  external: ["better-sqlite3", "mysql2"],
   target: "node20",
   format: "esm",
   mainFields: ["module", "main"],
@@ -76,11 +76,4 @@ const build = async (
   });
 };
 
-await Promise.allSettled([
-  // lambda
-  build("./src/handlers/http_site.js", "http_site.js", opts_common),
-  build("./src/handlers/http_admin.js", "http_admin.js", opts_common),
-
-  // fly.io
-  build("./src/main.js", "main.js", opts_common),
-]);
+await Promise.allSettled([build("./src/main.js", "main.js", opts_common)]);

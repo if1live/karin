@@ -31,7 +31,7 @@ const createDialect_mysql: DialectFn = async () => {
     user: url.username,
     password: url.password,
     port: url.port !== "" ? parseInt(url.port, 10) : undefined,
-    connectionLimit: settings.RUNTIME_NAME === "lambda" ? 1 : 5,
+    connectionLimit: 5,
     // 로컬에서 접속할때는 필요없는 속성. planetscale로 접속할때만 필요
     // ssl: { rejectUnauthorized: true },
   });
@@ -53,9 +53,7 @@ export const selectDialect = (): (() => Promise<Dialect>) => {
     case "development":
       return createDialect_mysql;
     case "production":
-      return settings.RUNTIME_NAME === "lambda"
-        ? createDialect_planetscale
-        : createDialect_mysql;
+      return createDialect_planetscale;
     case "test":
       return createDialect_sqlite;
     default:
