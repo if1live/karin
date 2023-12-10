@@ -2,11 +2,15 @@
 
 ```bash
 # 배포
-fly deploy --ha=false
+fly deploy
 
 # 권한 설정
 fly secrets set RABBITMQ_DEFAULT_USER=TODO_admin
 fly secrets set RABBITMQ_DEFAULT_PASS=TODO_password
+
+# 비용 줄이려고 machine은 1개만 사용
+fly scale show
+fly scale count 1
 
 # management 접속. 외부 접속이 막혀있어서 프록시 써야한다.
 # localhost에서의 충돌을 피하려고 프록시의 포트번호는 기본값과 다르게 설정.
