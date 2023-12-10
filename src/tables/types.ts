@@ -1,3 +1,3 @@
-export const tableName_FunctionDefinition = "function_definition";
-export const tableName_FunctionUrl = "function_url";
-export const tableName_EventSourceMapping = "event_source_mapping";
+export const tableName_FunctionDefinition = "functionDefinition";
+export const tableName_FunctionUrl = "functionUrl";
+export const tableName_EventSourceMapping = "eventSourceMapping";
