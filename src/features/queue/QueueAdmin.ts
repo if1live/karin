@@ -98,5 +98,5 @@ for (const mapping of actionMappings) {
       noAck: true,
     },
   );
-  console.log('prepare consume', mapping.queue)
+  console.log("prepare consume", mapping.queue);
 }
