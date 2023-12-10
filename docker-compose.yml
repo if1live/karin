@@ -23,3 +23,15 @@ services:
     image: adminer:latest
     ports:
       - 8080:8080
+
+  # sqs, redis는 실제로 사용되지 않지만 예제 플젝과 동시에 띄울때 필요
+  sqs:
+    image: softwaremill/elasticmq-native:1.5.2
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - 6379:6379

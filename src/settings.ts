@@ -6,6 +6,7 @@ export const NODE_ENV = process.env.NODE_ENV || "production";
 export const STAGE = process.env.STAGE || "dev";
 
 export const DATABASE_URL = process.env.DATABASE_URL || "";
+export const LAMBDA_URL = process.env.LAMBDA_URL;
 
 export const RABBITMQ_URL =
   process.env.RABBITMQ_URL || "amqp://guest:guest@127.0.0.1:5672";

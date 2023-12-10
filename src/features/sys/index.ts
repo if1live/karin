@@ -1,1 +1,1 @@
-export * as sysAdmin from "./admin.js";
+export * as sysAdmin from "./SysAdmin.js";
