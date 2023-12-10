@@ -18,7 +18,7 @@ WORKDIR "/app"
 RUN chown nobody /app
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /opt/artifact/main.mjs* ./
+COPY --from=builder --chown=nobody:root /opt/artifact/main.mjs* ./artifact/
 COPY --chown=nobody:root static/ ./static
 COPY --chown=nobody:root views/ ./views
 COPY --chown=nobody:root .env ./.env
@@ -27,4 +27,4 @@ USER nobody
 
 WORKDIR /app
 EXPOSE 4000
-ENTRYPOINT ["node", "--env-file", ".env", "--enable-source-maps", "--stack-trace-limit=1000", "main.mjs"]
+ENTRYPOINT ["node", "--env-file", ".env", "--enable-source-maps", "--stack-trace-limit=1000", "artifact/main.mjs"]
