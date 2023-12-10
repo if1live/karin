@@ -24,7 +24,9 @@ app.onError(async (err, c) => {
   return errorHandler(err, c);
 });
 
-app.use("*", compress());
+// TODO: hono/node-server 구현에 버그가 있어서 compress 미들웨어 있으면 c.html이 plain text로 응답한다.
+// https://github.com/honojs/node-server/issues/104
+// app.use("*", compress());
 
 app.get("/robots.txt", async (c) => {
   return c.text(robotsTxt);
