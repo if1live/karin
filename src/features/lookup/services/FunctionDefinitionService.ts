@@ -1,18 +1,12 @@
 import {
-  EventSourceMappingConfiguration,
   FunctionConfiguration,
-  FunctionUrlConfig,
-  ListEventSourceMappingsCommand,
-  ListFunctionUrlConfigsCommand,
   ListFunctionsCommand,
 } from "@aws-sdk/client-lambda";
 import * as R from "remeda";
-import { db, lambdaClient } from "../../instances/index.js";
-import {
-  tableName_EventSourceMapping,
-  tableName_FunctionDefinition,
-  tableName_FunctionUrl,
-} from "../../tables/types.js";
+import { db, lambdaClient } from "../../../instances/index.js";
+import { tableName_FunctionDefinition } from "../../../tables/types.js";
+
+const table = tableName_FunctionDefinition;
 
 export const FunctionDefinitionService = {
   async fetch(): Promise<FunctionConfiguration[]> {
@@ -25,8 +19,6 @@ export const FunctionDefinitionService = {
   },
 
   async synchronize(inputs: FunctionConfiguration[]) {
-    const table = tableName_FunctionDefinition;
-
     const founds = await db.selectFrom(table).selectAll().execute();
     type Tuple = (typeof founds)[number];
 
@@ -117,105 +109,9 @@ export const FunctionDefinitionService = {
       action_insert: candidates_insert.length,
     };
   },
-};
 
-export const FunctionUrlService = {
-  async fetch(input: {
-    functionName: string;
-  }): Promise<FunctionUrlConfig[]> {
-    const output = await lambdaClient.send(
-      new ListFunctionUrlConfigsCommand({
-        FunctionName: input.functionName,
-      }),
-    );
-
-    // 배포를 여러개 하면 다른값이 나올수 있는듯? 근데 나는 하나만 쓸거니까
-    const list = output.FunctionUrlConfigs ?? [];
-    return list;
-  },
-
-  async synchronize(input: FunctionUrlConfig) {
-    const table = tableName_FunctionUrl;
-    const functionArn = input.FunctionArn ?? "";
-
-    const found = await db
-      .selectFrom(table)
-      .selectAll()
-      .where("functionArn", "=", functionArn)
-      .executeTakeFirst();
-
-    if (!found) {
-      const result = await db
-        .insertInto(table)
-        .values({
-          functionArn,
-          functionUrl: input.FunctionUrl ?? "",
-          payload: JSON.stringify(input),
-        })
-        .execute();
-      return result;
-    }
-
-    const result = await db
-      .updateTable(table)
-      .where("functionArn", "=", functionArn)
-      .set({
-        functionUrl: input.FunctionUrl ?? "",
-        payload: JSON.stringify(input),
-      })
-      .execute();
-    return result;
-  },
-};
-
-export const EventSourceMappingService = {
-  async fetch(input: {
-    functionName: string;
-  }): Promise<EventSourceMappingConfiguration[]> {
-    const output = await lambdaClient.send(
-      new ListEventSourceMappingsCommand({
-        FunctionName: input.functionName,
-        MaxItems: 100,
-      }),
-    );
-
-    const list = output.EventSourceMappings ?? [];
-    return list;
-  },
-
-  async synchronize(input: EventSourceMappingConfiguration) {
-    const table = tableName_EventSourceMapping;
-    const uuid = input.UUID ?? "";
-
-    const found = await db
-      .selectFrom(table)
-      .selectAll()
-      .where("uuid", "=", uuid)
-      .executeTakeFirst();
-
-    if (!found) {
-      const result = await db
-        .insertInto(table)
-        .values({
-          uuid,
-          eventSourceArn: input.EventSourceArn ?? "",
-          functionArn: input.FunctionArn ?? "",
-          payload: JSON.stringify(input),
-        })
-        .execute();
-      return result;
-    }
-
-    // else...
-    const result = await db
-      .updateTable(table)
-      .where("uuid", "=", uuid)
-      .set({
-        eventSourceArn: input.EventSourceArn ?? "",
-        functionArn: input.FunctionArn ?? "",
-        payload: JSON.stringify(input),
-      })
-      .execute();
+  async reset() {
+    const result = await db.deleteFrom(table).execute();
     return result;
   },
 };

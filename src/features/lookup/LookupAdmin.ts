@@ -1,11 +1,9 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { MyRequest, MyResponse } from "../../system/index.js";
-import {
-  EventSourceMappingService,
-  FunctionDefinitionService,
-  FunctionUrlService,
-} from "./services.js";
+import { EventSourceMappingService } from "./services/EventSourceMappingService.js";
+import { FunctionDefinitionService } from "./services/FunctionDefinitionService.js";
+import { FunctionUrlService } from "./services/FunctionUrlService.js";
 
 export const resource = "/lookup" as const;
 export const app = new Hono();
@@ -23,6 +21,17 @@ export class LookupAdmin {
       tag: "html",
       file,
       payload,
+    };
+  }
+
+  async reset(req: MyRequest): Promise<MyResponse> {
+    await FunctionUrlService.reset();
+    await FunctionDefinitionService.reset();
+    await EventSourceMappingService.reset();
+
+    return {
+      tag: "json",
+      payload: {},
     };
   }
 
