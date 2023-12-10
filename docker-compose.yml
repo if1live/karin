@@ -9,6 +9,16 @@ services:
     ports:
       - 3306:3306
 
+  # management: http://localhost:15672
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   adminer:
     image: adminer:latest
     ports:

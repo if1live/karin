@@ -1,0 +1,18 @@
+# dockerignore 확인용 명령
+# https://stackoverflow.com/a/68196656
+
+# git
+.git
+.github
+
+# editor
+.*.sw[a-z]
+.vscode
+
+**/node_modules/
+**/artifact/
+**/dist/
+**/test/
+**/.turbo/
+**/.serverless/
+**/infra/
