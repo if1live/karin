@@ -5,6 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import { queueAdmin, queueController } from "./features/queue/index.js";
 import { sysAdmin } from "./features/sys/index.js";
+import { upstashController } from "./features/upstash/index.js";
 import { engine } from "./instances/index.js";
 import { errorHandler } from "./system/errors.js";
 
@@ -56,6 +57,7 @@ app.get(`${prefix_admin}/`, async (c) => {
 // 일반 API
 app.route(`${prefix_site}${lookupController.resource}`, lookupController.app);
 app.route(`${prefix_site}${queueController.resource}`, queueController.app);
+app.route(`${prefix_site}${upstashController.resource}`, upstashController.app);
 
 // 운영 API
 app.route(`${prefix_admin}${sysAdmin.resource}`, sysAdmin.app);

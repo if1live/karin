@@ -9,4 +9,6 @@ fly deploy --ha=false
 fly secrets set AWS_REGION=TODO_AWS_REGION
 fly secrets set AWS_ACCESS_KEY_ID=TODO_AWS_ACCESS_KEY_ID
 fly secrets set AWS_SECRET_ACCESS_KEY=TODO_AWS_SECRET_ACCESS_KEY
+
+fly secrets set FLY_REDIS_URL=TODO_FLY_REDIS_URL
 ```

@@ -7,7 +7,7 @@ import {
   SqliteDialect,
 } from "kysely";
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
-import { PoolOptions } from "mysql2";
+import { ConnectionOptions, PoolOptions } from "mysql2";
 import * as settings from "../settings.js";
 import { DB } from "../tables/index.js";
 
@@ -26,11 +26,11 @@ const createDialect_mysql: DialectFn = async () => {
 
   const url = new URL(settings.DATABASE_URL);
 
-  // 로컬에서 접속할때는 필요없는 속성. planetscale로 접속할때만 필요
-  const ssl_planetscale: PoolOptions["ssl"] = { rejectUnauthorized: true };
-  const ssl_localhost: PoolOptions["ssl"] = undefined;
-  const ssl =
-    settings.NODE_ENV === "production" ? ssl_planetscale : ssl_localhost;
+  // planetscale 연결할때 필요한 설정
+  const isPlanetScale = url.hostname?.includes(".psdb.");
+  const databaseOptions_ssl: ConnectionOptions["ssl"] = isPlanetScale
+    ? { rejectUnauthorized: true }
+    : undefined;
 
   const pool = Mysql.createPool({
     database: url.pathname.replace("/", ""),
@@ -39,7 +39,9 @@ const createDialect_mysql: DialectFn = async () => {
     password: url.password,
     port: url.port !== "" ? parseInt(url.port, 10) : undefined,
     connectionLimit: 5,
-    ssl,
+    charset: "utf8mb4",
+    timezone: "+00:00",
+    ssl: databaseOptions_ssl,
   });
 
   return new MysqlDialect({

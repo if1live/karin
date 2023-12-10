@@ -11,6 +11,9 @@ export const LAMBDA_URL = process.env.LAMBDA_URL;
 export const RABBITMQ_URL =
   process.env.RABBITMQ_URL || "amqp://guest:guest@127.0.0.1:5672";
 
+export const FLY_REDIS_URL =
+  process.env.FLY_REDIS_URL || "redis://127.0.0.1:6379";
+
 // AWS 환경 변수
 export const AWS_REGION = process.env.AWS_REGION || "ap-northeast-1";
 
