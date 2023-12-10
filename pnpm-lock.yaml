@@ -11,9 +11,6 @@ dependencies:
   '@hono/node-server':
     specifier: ^1.3.1
     version: 1.3.1
-  '@planetscale/database':
-    specifier: ^1.11.0
-    version: 1.11.0
   amqplib:
     specifier: ^0.10.3
     version: 0.10.3
@@ -23,9 +20,6 @@ dependencies:
   kysely:
     specifier: ^0.26.3
     version: 0.26.3
-  kysely-planetscale:
-    specifier: ^1.4.0
-    version: 1.4.0(@planetscale/database@1.11.0)(kysely@0.26.3)
   kysely-plugin-prefix:
     specifier: ^1.1.0
     version: 1.1.0
@@ -547,13 +541,6 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@babel/runtime@7.23.5:
-    resolution: {integrity: sha512-NdUTHcPe4C99WxPub+K9l9tK5/lV4UXIoaHSYgzco9BCyjKAAwzdBI+wWtYqHt7LJdbo74ZjRPJgzVweq1sz0w==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      regenerator-runtime: 0.14.0
-    dev: false
-
   /@biomejs/biome@1.4.1:
     resolution: {integrity: sha512-JccVAwPbhi37pdxbAGmaOBjUTKEwEjWAhl7rKkVVuXHo4MLASXJ5HR8BTgrImi4/7rTBsGz1tgVD1Kwv1CHGRg==}
     engines: {node: '>=14.*'}
@@ -1041,11 +1028,6 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
-
-  /@planetscale/database@1.11.0:
-    resolution: {integrity: sha512-aWbU+D/IRHoDE9975y+Q4c+EwwAWxCPwFId+N1AhQVFXzbeJMkj6KN2iQtoi03elcLMRdfT+V3i9Z4WRw+/oIA==}
-    engines: {node: '>=16'}
-    dev: false
 
   /@smithy/abort-controller@2.0.15:
     resolution: {integrity: sha512-JkS36PIS3/UCbq/MaozzV7jECeL+BTt4R75bwY8i+4RASys4xOyUS1HsRyUNSqUXFP4QyCz5aNnh3ltuaxv+pw==}
@@ -1631,13 +1613,6 @@ packages:
       which: 2.0.2
     dev: true
 
-  /date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
-    dependencies:
-      '@babel/runtime': 7.23.5
-    dev: false
-
   /debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -1930,17 +1905,6 @@ packages:
       '@pkgjs/parseargs': 0.11.0
     dev: true
 
-  /kysely-planetscale@1.4.0(@planetscale/database@1.11.0)(kysely@0.26.3):
-    resolution: {integrity: sha512-dM2xgOM50+IiOIrSCEn/6lgXcE7J752oNpV6NcIYNgG/AfYGMtWm2ZK7PyeIPy5JG1jZvQvqwTFbGK4HGH/hJw==}
-    peerDependencies:
-      '@planetscale/database': '*'
-      kysely: '*'
-    dependencies:
-      '@planetscale/database': 1.11.0
-      date-fns: 2.30.0
-      kysely: 0.26.3
-    dev: false
-
   /kysely-plugin-prefix@1.1.0:
     resolution: {integrity: sha512-rCzoCqKgLugg6ehhujVr+YccZBGVH0hjA5k8ujua11zdMZxPlDMzkinplf9sxndDwMs2E77Kg1EWQI1126YxmA==}
     dependencies:
@@ -2199,10 +2163,6 @@ packages:
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
     dev: true
-
-  /regenerator-runtime@0.14.0:
-    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
-    dev: false
 
   /remeda@1.29.0:
     resolution: {integrity: sha512-M3LQ14KtMdQ1879lj/kKji3zBk158s7Rwg963mEkTfQFMxnKrIEAMxJfo/+0sp/+uGgN/KMVU2MBA4LNjqf8YQ==}

@@ -5,7 +5,6 @@ import {
   ParseJSONResultsPlugin,
   SqliteDialect,
 } from "kysely";
-import { PlanetScaleDialect } from "kysely-planetscale";
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
 import * as settings from "../settings.js";
 import { DB } from "../tables.js";
@@ -21,7 +20,6 @@ const createDialect_sqlite: DialectFn = async () => {
 };
 
 const createDialect_mysql: DialectFn = async () => {
-  // 빌드에서 제외하고 싶은 패키지라서 await import
   const { default: Mysql } = await import("mysql2");
 
   const url = new URL(settings.DATABASE_URL);
@@ -41,23 +39,17 @@ const createDialect_mysql: DialectFn = async () => {
   });
 };
 
-const createDialect_planetscale: DialectFn = async () => {
-  return new PlanetScaleDialect({
-    url: settings.DATABASE_URL,
-    fetch: fetch,
-  });
-};
-
 export const selectDialect = (): (() => Promise<Dialect>) => {
   switch (settings.NODE_ENV) {
     case "development":
-      return createDialect_mysql;
     case "production":
-      return createDialect_planetscale;
+      return createDialect_mysql;
     case "test":
       return createDialect_sqlite;
     default:
-      return createDialect_sqlite;
+      throw new Error("unknown dialect", {
+        cause: { NODE_ENV: settings.NODE_ENV },
+      });
   }
 };
 
