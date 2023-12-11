@@ -21,10 +21,9 @@ RUN chown nobody /app
 COPY --from=builder --chown=nobody:root /opt/artifact/main.mjs* ./artifact/
 COPY --chown=nobody:root static/ ./static
 COPY --chown=nobody:root views/ ./views
-COPY --chown=nobody:root .env.production.local ./.env
 
 USER nobody
 
 WORKDIR /app
 EXPOSE 4000
-ENTRYPOINT ["node", "--env-file", ".env", "--enable-source-maps", "--stack-trace-limit=1000", "artifact/main.mjs"]
+ENTRYPOINT ["node", "--enable-source-maps", "--stack-trace-limit=1000", "artifact/main.mjs"]
