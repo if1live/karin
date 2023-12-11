@@ -13,8 +13,7 @@
       ".serverless/**/*",
       "artifact/**/*",
       "dist/**/*",
-      "biome.json",
-      "codegen.ts"
+      "biome.json"
     ]
   },
   "linter": {

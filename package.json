@@ -20,7 +20,7 @@
     "clean": "rimraf dist artifact .turbo .serverless",
     "dev": "node --env-file .env.sample --import tsx --watch ./src/main.ts",
     "fix": "biome check --apply-unsafe .",
-    "generate": "prisma generate",
+    "generate": "prisma generate && tsx ./etc/generate_prisma.ts",
     "lint": "biome check .",
     "test": "globstar -- node --env-file .env.test --import tsx --test \"test/**/*.test.ts\""
   },
