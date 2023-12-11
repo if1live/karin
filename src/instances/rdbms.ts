@@ -28,9 +28,12 @@ const createDialect_mysql: DialectFn = async () => {
 
   // planetscale 연결할때 필요한 설정
   const isPlanetScale = url.hostname?.includes(".psdb.");
-  const databaseOptions_ssl: ConnectionOptions["ssl"] = isPlanetScale
+  const ssl: ConnectionOptions["ssl"] = isPlanetScale
     ? { rejectUnauthorized: true }
     : undefined;
+
+  const isAwsLambda = !!process.env.LAMBDA_TASK_ROOT;
+  const connectionLimit = isAwsLambda ? 1 : 5;
 
   const pool = Mysql.createPool({
     database: url.pathname.replace("/", ""),
@@ -38,10 +41,10 @@ const createDialect_mysql: DialectFn = async () => {
     user: url.username,
     password: url.password,
     port: url.port !== "" ? parseInt(url.port, 10) : undefined,
-    connectionLimit: 5,
+    connectionLimit,
     charset: "utf8mb4",
     timezone: "+00:00",
-    ssl: databaseOptions_ssl,
+    ssl,
   });
 
   return new MysqlDialect({

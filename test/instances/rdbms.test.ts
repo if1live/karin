@@ -9,7 +9,7 @@ import {
   sql,
 } from "kysely";
 import { createKysely, selectDialect } from "../../src/instances/rdbms.js";
-import { Timestamp } from "../../src/tables/tables.js";
+import { Timestamp } from "../../src/tables/index.js";
 
 /**
  * json example

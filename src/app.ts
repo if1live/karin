@@ -2,6 +2,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
+import { prettyJSON } from "hono/pretty-json";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import { queueAdmin, queueController } from "./features/queue/index.js";
 import { sysAdmin } from "./features/sys/index.js";
@@ -25,6 +26,8 @@ const prefix_admin = "/admin" as const;
 app.onError(async (err, c) => {
   return errorHandler(err, c);
 });
+
+app.get("*", prettyJSON());
 
 // TODO: hono/node-server 구현에 버그가 있어서 compress 미들웨어 있으면 c.html이 plain text로 응답한다.
 // https://github.com/honojs/node-server/issues/104

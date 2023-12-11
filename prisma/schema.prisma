@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// prisma 그냥 client는 안씀
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+generator kysely {
+  provider = "prisma-kysely"
+
+  // Optionally provide a destination directory for the generated file
+  // and a filename of your choice
+  output    = "../src/tables"
+  fileName  = "codegen.ts"
+  camelCase = true
+}
+
+datasource db {
+  // provider=sqlite이면 Json 필드를 쓸 수 없다.
+  // 어차피 최종 결과물은 mysql이 될거니까 mysql 기준으로 작성
+  provider = "mysql"
+
+  // https://www.prisma.io/docs/guides/development-environment/environment-variables/managing-env-files-and-setting-variables
+  // cp .env.development .env
+  // dotenv-cli 같은거 쓰는것도 방법인데 db 주소는 자주 안바뀔거니까 무식하게 대응
+  url = env("DATABASE_URL")
+}
+
+// prisma-kysely가 @updateAt을 기본값이 주어지는 필드로 처리하지 않았다.
+// https://github.com/valtyr/prisma-kysely/issues/59
+// "Is Prisma's @updatedAt supported?" 이슈가 있으나 고칠 생각이 없어보여서 fork
+// ...해서 @updatedAt일때 Generated<X>를 쓰도록 고쳤는데
+// prisma migration에서 기본값을 잡지 않은 문제 때문에 결국 이슈의 내용되어 되어버림
+// @updatedAt라는걸 표현하고 싶고, db에는 기본값이 저장될때 생성되서 신경 안쓰면 좋겠고
+// 둘을 타협한 결과물
+// prisma에서는 default, updated을 동시에 정의
+// updated_at DateTime @default(now()) @updatedAt
+// migration 생성시 updated_at은 손으로 고치기
+// `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+// 무식하지만 mysql만 지원하면 되니까
+
+// https://www.prisma.io/docs/concepts/components/prisma-client/working-with-prismaclient/use-custom-model-and-field-names
+// kysely-prisma는 model {name}을 코드 생성에서 그대로 쓴다
+// 모델 이름은 PascalCase로 작성하고 @@map으로 db테이블 이름을 붙인다
+// 필드 이름까지 소문자로 바꾸는건 노가다가 심해서 보류
+
+// FunctionConfiguration
+model FunctionDefinition {
+  id Int @id @default(autoincrement())
+
+  function_name String @unique
+  function_arn  String @unique
+
+  payload Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
+
+  @@map("miyako_function_definition")
+}
+
+// FunctionUrlConfig
+model FunctionUrl {
+  id Int @id @default(autoincrement())
+
+  // arn:aws:lambda:ap-northeast-1:123456789012:function:ayane-dev-http
+  function_arn String @unique
+
+  // https://abcdefghijk.lambda-url.ap-northeast-1.on.aws/
+  function_url String @unique
+
+  payload Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
+
+  @@map("miyako_function_url")
+}
+
+// Lambda <-> SQS
+// EventSourceMappingConfiguration
+model EventSourceMapping {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique
+
+  // arn:aws:sqs:ap-northeast-1:123456789012:toki-example-dev
+  event_source_arn String @unique
+
+  // arn:aws:lambda:ap-northeast-1:123456789012:function:toki-example-dev-sqsMain
+  function_arn String @unique
+
+  payload Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
+
+  @@map("miyako_event_source_mapping")
+}

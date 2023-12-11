@@ -21,7 +21,7 @@ RUN chown nobody /app
 COPY --from=builder --chown=nobody:root /opt/artifact/main.mjs* ./artifact/
 COPY --chown=nobody:root static/ ./static
 COPY --chown=nobody:root views/ ./views
-COPY --chown=nobody:root .env ./.env
+COPY --chown=nobody:root .env.production.local ./.env
 
 USER nobody
 

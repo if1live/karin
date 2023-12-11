@@ -1,7 +1,7 @@
 import { CamelCasePlugin, Kysely, ParseJSONResultsPlugin } from "kysely";
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
 import { selectDialect } from "../src/instances/rdbms.js";
-import { DB } from "../src/tables/tables.js";
+import { DB } from "../src/tables/index.js";
 import {
   tableName_EventSourceMapping,
   tableName_FunctionDefinition,
