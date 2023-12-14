@@ -7,44 +7,28 @@ export const redis = new Redis(settings.REDIS_URL, {
 });
 await redis.connect();
 
-// const sqsEndpoint_localhost = "http://127.0.0.1:9324";
-const sqsEndpoint_localhost = "http://127.0.0.1:4000/sqs";
-const sqsEndpoint_prod = `https://sqs.${settings.AWS_REGION}.amazonaws.com`;
-const sqsEndpoint =
-  settings.NODE_ENV === "production" ? sqsEndpoint_prod : sqsEndpoint_localhost;
+export const sqsEndpoint_elasticmq = "http://127.0.0.1:9324";
 
-type SqsClientFn = () => SQSClient;
+export const sqsEndpoint_shiroko = "http://127.0.0.1:4000/api/queue";
 
-const createSqsClient_prod: SqsClientFn = () => {
+export const createSqsClient_prod = () => {
   return new SQSClient({
     region: settings.AWS_REGION,
   });
 };
 
-const createSqsClient_localhost: SqsClientFn = () => {
+export const createSqsClient_dev = (endpoint: string) => {
   return new SQSClient({
-    // region: settings.AWS_REGION,
-    endpoint: sqsEndpoint_localhost,
+    endpoint,
     credentials: settings.AWS_CREDENTIALS,
   });
 };
 
-export const sqsClient: SQSClient =
-  settings.NODE_ENV === "development"
-    ? createSqsClient_localhost()
-    : createSqsClient_prod();
-
-type CreateQueueUrlFn = (queueName: string) => string;
-
-const createQueueUrl_localhost: CreateQueueUrlFn = (queueName) => {
-  return `${sqsEndpoint}/queue/${queueName}`;
+export const createQueueUrl_dev = (endpoint: string, queue: string) => {
+  return `${endpoint}/queue/${queue}`;
 };
 
-const createQueueUrl_prod: CreateQueueUrlFn = (queueName) => {
-  return `${sqsEndpoint}/${settings.AWS_ACCOUNT_ID}/${queueName}`;
+export const createQueueUrl_prod = (queue: string) => {
+  const endpoint = `https://sqs.${settings.AWS_REGION}.amazonaws.com`;
+  return `${endpoint}/${settings.AWS_ACCOUNT_ID}/${queue}`;
 };
-
-export const createQueueUrl =
-  settings.NODE_ENV === "production"
-    ? createQueueUrl_prod
-    : createQueueUrl_localhost;

@@ -4,7 +4,11 @@ import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
 import { prettyJSON } from "hono/pretty-json";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
-import { queueAdmin, queueController } from "./features/queue/index.js";
+import {
+  queueAdmin,
+  queueApi,
+  queueController,
+} from "./features/queue/index.js";
 import { sysAdmin } from "./features/sys/index.js";
 import { upstashController } from "./features/upstash/index.js";
 import { engine } from "./instances/index.js";
@@ -20,6 +24,7 @@ User-agent: GPTBot
 Disallow: /
 `.trimStart();
 
+const prefix_api = "/api" as const;
 const prefix_site = "/r" as const;
 const prefix_admin = "/admin" as const;
 
@@ -57,12 +62,15 @@ app.get(`${prefix_admin}/`, async (c) => {
   return c.html(text);
 });
 
-// 일반 API
+// API
+app.route(`${prefix_api}${queueApi.resource}`, queueApi.app);
+
+// 컨트롤러
 app.route(`${prefix_site}${lookupController.resource}`, lookupController.app);
 app.route(`${prefix_site}${queueController.resource}`, queueController.app);
 app.route(`${prefix_site}${upstashController.resource}`, upstashController.app);
 
-// 운영 API
+// 운영
 app.route(`${prefix_admin}${sysAdmin.resource}`, sysAdmin.app);
 app.route(`${prefix_admin}${lookupAdmin.resource}`, lookupAdmin.app);
 app.route(`${prefix_admin}${queueAdmin.resource}`, queueAdmin.app);
