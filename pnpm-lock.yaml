@@ -23,6 +23,9 @@ importers:
       '@aws-sdk/client-lambda':
         specifier: ^3.470.0
         version: 3.470.0
+      '@aws-sdk/client-sqs':
+        specifier: ^3.465.0
+        version: 3.473.0
       '@aws-sdk/util-arn-parser':
         specifier: ^3.465.0
         version: 3.465.0
