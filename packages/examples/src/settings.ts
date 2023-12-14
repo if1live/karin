@@ -13,6 +13,3 @@ export const AWS_CREDENTIALS: Credentials | undefined =
   NODE_ENV !== "production"
     ? { accessKeyId: "a", secretAccessKey: "b" }
     : undefined;
-
-export const RABBITMQ_URL =
-  process.env.RABBITMQ_URL || "amqp://guest:guest@127.0.0.1";

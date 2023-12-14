@@ -5,7 +5,6 @@ import {
   SendMessageBatchCommand,
   SendMessageCommand,
 } from "@aws-sdk/client-sqs";
-import amqplib from "amqplib";
 import { APIGatewayProxyHandlerV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import z from "zod";
 import { createQueueUrl, redis, sqsClient } from "../instances.js";
@@ -65,17 +64,6 @@ export const dispatch: APIGatewayProxyHandlerV2 = async (event, context) => {
     return respond_200(output);
   }
 
-  if (check("POST", "/rabbitmq/send")) {
-    const req = SendReq.parse(event.queryStringParameters);
-    const output = await fn_rabbitmq_send(req);
-    return respond_200(output);
-  }
-
-  if (check("POST", "/rabbitmq/purge")) {
-    const output = await fn_rabbitmq_purge();
-    return respond_200(output);
-  }
-
   // else...
   return {
     statusCode: 404,
@@ -131,40 +119,4 @@ const fn_sqs_purge = async () => {
     }),
   );
   return { tag: "sqs:purge", output };
-};
-
-// TODO: 지연된 메세지 구현?
-const fn_rabbitmq_send = async (req: SendReq) => {
-  const delay = req.delay ?? 0;
-  const message = req.message ?? "<BLANK>";
-  const message_buffer = Buffer.from(message);
-
-  const { channel } = await connectRabbitMQ();
-  const result = channel.sendToQueue(queueName, message_buffer);
-
-  // TODO: sendToQueue가 promise 리턴하는 함수가 아니다.
-  // 혹시나 람다에서 멈추는거 대비해서 임시로 setTimeout을 넣어둔다.
-  await setTimeout(100);
-  await channel.close();
-
-  return { tag: "rabbitmq:send", result };
-};
-
-const fn_rabbitmq_purge = async () => {
-  const { channel } = await connectRabbitMQ();
-  const result = await channel.purgeQueue(queueName);
-  await setTimeout(100);
-  await channel.close();
-
-  return { tag: "rabbitmq:reset", result };
-};
-
-const connectRabbitMQ = async () => {
-  const rabbitmq = await amqplib.connect(settings.RABBITMQ_URL);
-  const channel = await rabbitmq.createChannel();
-  await channel.assertQueue(queueName, {
-    durable: false,
-  });
-
-  return { channel };
 };

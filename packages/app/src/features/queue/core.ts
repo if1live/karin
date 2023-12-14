@@ -1,5 +1,5 @@
 import { parse } from "@aws-sdk/util-arn-parser";
-import { channel, db } from "../../instances/index.js";
+import { db } from "../../instances/index.js";
 
 // TODO: 큐 목록을 얻어서 채널 목록 생성하는 시점? 서버 재시작 시점?
 // lookup하고 얽혀서 얻어야한다
@@ -24,10 +24,4 @@ export const actionMappings = founds.map((found): ActionMapping => {
 });
 console.log("actionMappings", actionMappings);
 
-await Promise.all(
-  actionMappings.map(async (mapping) => {
-    await channel.assertQueue(mapping.queue, {
-      durable: false,
-    });
-  }),
-);
+// TODO: 구독 구현?

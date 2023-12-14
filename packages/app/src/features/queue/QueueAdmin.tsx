@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { InvokeCommand } from "@aws-sdk/client-lambda";
 import { SQSEvent, SQSRecord } from "aws-lambda";
 import { Hono } from "hono";
-import { channel, lambdaClient } from "../../instances/index.js";
+import { lambdaClient } from "../../instances/index.js";
 import * as settings from "../../settings.js";
 import { MyRequest, MyResponse } from "../../system/index.js";
 import { ActionMapping, actionMappings } from "./core.js";
@@ -30,17 +30,7 @@ app.get("", async (c) => {
   return MyResponse.respond(c, resp);
 });
 
-// TODO: 테스트용 떔빵
-app.get("/send", async (c) => {
-  // TODO: 더 멀쩡한 코드?
-  // TODO: sqs 호환 API로 메세지를 받을수 있어야한다.
-  // 그래야 람다쪽에서 sqs인지 miyako인지 구분하지 않을수 있다.
-  const first = actionMappings[0] as ActionMapping;
-  const message = new Date().toISOString();
-  const result = channel.sendToQueue(first.queue, Buffer.from(message));
-  return c.json({ result });
-});
-
+/*
 for (const mapping of actionMappings) {
   // TODO: consumer? 이런건 어디에 넣는게 좋을까?
   // TODO: consumer?
@@ -100,3 +90,4 @@ for (const mapping of actionMappings) {
   );
   console.log("prepare consume", mapping.queue);
 }
+*/

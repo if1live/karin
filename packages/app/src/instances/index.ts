@@ -1,4 +1,3 @@
-import amqplib from "amqplib";
 import { Redis } from "ioredis";
 import { Liquid } from "liquidjs";
 import * as settings from "../settings.js";
@@ -19,5 +18,3 @@ export const engine = new Liquid({
   cache: settings.NODE_ENV === "production",
 });
 
-export const rabbit = await amqplib.connect(settings.RABBITMQ_URL);
-export const channel = await rabbit.createChannel();

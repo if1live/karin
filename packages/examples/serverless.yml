@@ -32,7 +32,6 @@ provider:
     NODE_ENV: production
 
     REDIS_URL: ${env:REDIS_URL}
-    RABBITMQ_URL: ${env:RABBITMQ_URL}
 
   iam:
     role:

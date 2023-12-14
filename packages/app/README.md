@@ -1,7 +1,6 @@
 ## deploy
 
-1. RabbitMQ: `infra/rabbitmq/README.md`
-2. terraform: `infra/terraform/README.md`
+1. terraform: `infra/terraform/README.md`
 
 ```bash
 fly deploy
