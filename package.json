@@ -13,7 +13,8 @@
     "dev": "pnpm -r dev",
     "fix": "pnpm -r fix",
     "lint": "pnpm -r lint",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "validate": "syncpack list-mismatches"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.4.1",
