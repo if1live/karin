@@ -40,10 +40,26 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: build
+      - name: root
+        run: |
+          pnpm validate
+
+      - name: app
+        working-directory: packages/app
         run: |
           pnpm build
           pnpm test
 
-      - name: lint
+      - name: example
+        working-directory: packages/examples
+        run: |
+          pnpm build
+          pnpm test
+
+      - name: app:lint
+        working-directory: packages/app
+        run: pnpm lint
+
+      - name: examples:lint
+        working-directory: packages/examples
         run: pnpm lint
