@@ -67,6 +67,8 @@ app.route(`${prefix_admin}${sysAdmin.resource}`, sysAdmin.app);
 app.route(`${prefix_admin}${lookupAdmin.resource}`, lookupAdmin.app);
 app.route(`${prefix_admin}${queueAdmin.resource}`, queueAdmin.app);
 
-app.get("*", async (c) => {
+app.use("*", async (c) => {
+  // TODO: logging library?
+  console.log(`404: ${c.req.method} ${c.req.url}`);
   throw new HTTPException(404, { message: "not found" });
 });
