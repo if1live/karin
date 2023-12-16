@@ -12,6 +12,9 @@ fly secrets set AWS_SECRET_ACCESS_KEY=TODO_AWS_SECRET_ACCESS_KEY
 fly secrets set DATABASE_URL=TODO_DATABASE_URL
 fly secrets set REDIS_URL=TODO_REDIS_URL
 
+fly secrets set ADMIN_ID=TODO_ADMIN_ID
+fly secrets set ADMIN_PW=TODO_ADMIN_PW
+
 # 비용 줄이려고 machine은 1개만 사용
 fly scale show
 fly scale count 1

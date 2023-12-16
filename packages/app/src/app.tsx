@@ -1,5 +1,6 @@
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
+import { basicAuth } from "hono/basic-auth";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
@@ -33,6 +34,13 @@ const prefix_site = "/s" as const;
 const prefix_admin = "/admin" as const;
 
 app.onError(async (err, c) => {
+  if (err instanceof HTTPException) {
+    // HTTPException를 직접 제어하면 basicAuth가 무시되어버린다.
+    const resp = err.getResponse();
+    console.log(resp);
+    return resp;
+  }
+  // else...
   return errorHandler(err, c);
 });
 
@@ -48,6 +56,12 @@ app.get("*", prettyJSON());
 if (settings.NODE_ENV) {
   app.use("*", livereloadMiddleware());
 }
+
+const myauth = basicAuth({
+  username: settings.ADMIN_ID,
+  password: settings.ADMIN_PW,
+});
+app.use("/admin/*", myauth);
 
 // TODO: hono/node-server 구현에 버그가 있어서 compress 미들웨어 있으면 c.html이 plain text로 응답한다.
 // https://github.com/honojs/node-server/issues/104
