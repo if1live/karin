@@ -24,15 +24,15 @@ export const FunctionDefinitionService = {
 
     const map_prev = new Map<string, Tuple>();
     for (const found of founds) {
-      map_prev.set(found.functionArn, found);
+      map_prev.set(found.functionName, found);
     }
 
     const map_next = new Map<string, FunctionConfiguration>();
     for (const input of inputs) {
-      if (!input.FunctionArn) {
-        throw new Error("empty FunctionArn");
+      if (!input.FunctionName) {
+        throw new Error("empty FunctionName");
       }
-      map_next.set(input.FunctionArn, input);
+      map_next.set(input.FunctionName, input);
     }
 
     // o -> o: update
@@ -41,7 +41,7 @@ export const FunctionDefinitionService = {
 
     const candidates_update = [...map_prev.values()]
       .map((prev) => {
-        const next = map_next.get(prev.functionArn);
+        const next = map_next.get(prev.functionName);
         return next ? { prev, next } : null;
       })
       .filter(R.isNonNull)
@@ -56,14 +56,14 @@ export const FunctionDefinitionService = {
 
     const candidates_delete = [...map_prev.values()]
       .map((prev) => {
-        const next = map_next.get(prev.functionArn);
+        const next = map_next.get(prev.functionName);
         return next ? null : { prev, next: null };
       })
       .filter(R.isNonNull);
 
     const candidates_insert = [...map_next.values()]
       .map((next) => {
-        const prev = map_prev.get(next.FunctionArn ?? "");
+        const prev = map_prev.get(next.FunctionName ?? "");
         return prev ? null : { prev: null, next };
       })
       .filter(R.isNonNull);
@@ -72,7 +72,7 @@ export const FunctionDefinitionService = {
       for (const { prev, next } of candidates_update) {
         await db
           .updateTable(table)
-          .where("functionArn", "=", prev.functionArn)
+          .where("functionName", "=", prev.functionName)
           .set({
             functionArn: next.FunctionArn ?? "",
             functionName: next.FunctionName ?? "",
@@ -83,10 +83,10 @@ export const FunctionDefinitionService = {
     }
 
     if (candidates_delete.length > 0) {
-      const arns = candidates_delete.map((x) => x.prev.functionArn);
+      const names = candidates_delete.map((x) => x.prev.functionName);
       const result = await db
         .deleteFrom(table)
-        .where("functionArn", "in", arns)
+        .where("functionName", "in", names)
         .execute();
     }
 

@@ -73,4 +73,8 @@ export const EventSourceMappingService = {
       .executeTakeFirst();
     return found;
   },
+
+  async deleteByFunctionArn(arn: string) {
+    await db.deleteFrom(table).where("functionArn", "=", arn).execute();
+  },
 };

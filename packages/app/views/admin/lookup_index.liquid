@@ -3,33 +3,108 @@
 {% block content %}
   <h1>lookup</h1>
 
-  <form method="post" action="/admin/lookup/synchronize/list">
-    <button
-      type="submit"
-      name="action"
-      value="synchronize">synchronize:list</button>
-  </form>
+  {% for entry in list %}
+    <div>
+      {% assign data_fn = entry.definition %}
+      {% assign data_url = entry.url %}
+      {% assign data_mapping = entry.mapping %}
+      {% assign functionName = data_fn.functionName %}
+      {% assign functionArn = data_fn.functionArn %}
 
-  <form method="post" action="/admin/lookup/synchronize/url">
-    <input
-      type="text"
-      name="functionName"
-      value="ayane-dev-http"
-      placeholder="sample-function-name" />
+      <h2>{{ functionName }}</h2>
 
-    <button
-      type="submit"
-      name="action"
-      value="synchronize">synchronize:url</button>
-  </form>
+      <dl>
+        {% if true %}
+          <dt>short function arn</dt>
+          <dd>{{ data_fn.display_functionArn }}</dd>
+        {% endif %}
 
-  <form method="post" action="/admin/lookup/synchronize/event">
-    <input
-      type="text"
-      name="functionName"
-      value="karin-dev-sqsSimple"
-      placeholder="sample-function-name" />
+        {% if data_url %}
+          <dt>function url</dt>
+          <dd>
+            <a href="{{ data_url.functionUrl }}">
+              {{ data_url.functionUrl }}
+            </a>
+          </dd>
+        {% endif %}
 
-    <button type="submit">synchronize:event</button>
-  </form>
+        {% if data_mapping %}
+          <dt>short event source arn</dt>
+          <dd>{{ data_mapping.display_eventSourceArn }}</dd>
+
+          <dt>batch size</dt>
+          <dd>{{ data_mapping.batchSize }}</dd>
+        {% endif %}
+      </dl>
+
+      <details>
+        <summary>aws function definition</summary>
+<pre>{{ data_fn.payload | json: 2 }}</pre>
+      </details>
+
+      {% if data_url %}
+        <details>
+          <summary>aws function url</summary>
+<pre>{{ data_url.payload | json: 2 }}</pre>
+        </details>
+      {% endif %}
+
+      {% if data_mapping %}
+        <details>
+          <summary>aws event source mapping</summary>
+<pre>{{ data_mapping.payload | json: 2 }}</pre>
+        </details>
+      {% endif %}
+
+      <div class="ui mini buttons">
+        <form method="post" action="/admin/lookup/synchronize/url">
+          <input
+            type="hidden"
+            name="functionName"
+            value={{functionName}} />
+          <button class="ui button" type="submit">
+            url
+          </button>
+        </form>
+        <div class="or"></div>
+        <form method="post" action="/admin/lookup/synchronize/event">
+          <input
+            type="hidden"
+            name="functionName"
+            value={{functionName}} />
+          <button class="ui button" type="submit">
+            event
+          </button>
+        </form>
+        <div class="or"></div>
+        <form method="post" action="/admin/lookup/reset">
+          <input
+            type="hidden"
+            name="functionArn"
+            value={{functionArn}} />
+          <button class="ui button" type="submit">
+            event
+          </button>
+        </form>
+      </div>
+
+    </div>
+    <hr/>
+  {% endfor %}
+
+  <div class="ui mini buttons">
+    <form method="post" action="/admin/lookup/synchronize/list">
+      <button class="ui primary button" type="submit">
+        synchronize
+      </button>
+    </form>
+
+    <div class="or"></div>
+
+    <form method="post" action="/admin/lookup/truncate">
+      <button class="negative ui button" type="submit">
+        truncate
+      </button>
+    </form>
+  </div>
 {% endblock %}

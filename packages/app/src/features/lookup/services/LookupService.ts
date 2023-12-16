@@ -22,12 +22,12 @@ export const LookupService = {
       .selectAll()
       .execute();
 
-    const map_url = new Map();
+    const map_url = new Map<string, (typeof list_url)[number]>();
     for (const x of list_url) {
       map_url.set(x.functionArn, x);
     }
 
-    const map_mapping = new Map();
+    const map_mapping = new Map<string, (typeof list_mapping)[number]>();
     for (const x of list_mapping) {
       map_mapping.set(x.functionArn, x);
     }

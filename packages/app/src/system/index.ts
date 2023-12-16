@@ -8,8 +8,8 @@ type BaseResponse = {
   headers?: Record<string, string | string[]>;
 };
 
-type MyResponse_html<T> = {
-  tag: "html";
+type MyResponse_render<T> = {
+  tag: "render";
   file: string;
   payload: T;
 } & BaseResponse;
@@ -32,13 +32,13 @@ type MyResponse_redirect = {
 export type MyResponse<T extends object = object> =
   | MyResponse_redirect
   | MyResponse_text
-  | MyResponse_html<T>
+  | MyResponse_render<T>
   | MyResponse_json<T>;
 
 export const MyResponse = {
   async respond(c: Context, r: MyResponse) {
     switch (r.tag) {
-      case "html": {
+      case "render": {
         const html = await engine.renderFile(r.file, r.payload);
         return c.html(html, r.status, r.headers);
       }

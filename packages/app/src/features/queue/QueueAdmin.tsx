@@ -15,7 +15,7 @@ export class QueueAdmin {
     const payload = {};
     const file = "admin/queue_index";
     return {
-      tag: "html",
+      tag: "render",
       file,
       payload,
     };

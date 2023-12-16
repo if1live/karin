@@ -1,12 +1,7 @@
+import { parse } from "@aws-sdk/util-arn-parser";
 import { Hono } from "hono";
 import { z } from "zod";
-import { Layout } from "../../components/index.js";
-import {
-  EventSourceMappingCell,
-  FunctionLink,
-  SynchronizeEventButton,
-  SynchronizeUrlButton,
-} from "./components/index.js";
+import { MyResponse } from "../../system/index.js";
 import { EventSourceMappingService } from "./services/EventSourceMappingService.js";
 import { FunctionDefinitionService } from "./services/FunctionDefinitionService.js";
 import { FunctionUrlService } from "./services/FunctionUrlService.js";
@@ -22,72 +17,75 @@ const FunctionNameInput = z.object({
 });
 type FunctionNameInput = z.infer<typeof FunctionNameInput>;
 
+const FunctionArnInput = z.object({
+  functionArn: z.string(),
+});
+type FunctionArnInput = z.infer<typeof FunctionArnInput>;
+
 app.get("", async (c) => {
-  const list = await LookupService.load();
+  const list_naive = await LookupService.load();
+  const list = list_naive.map((entry) => {
+    const fn_definition = (prev: NonNullable<(typeof entry)["definition"]>) => {
+      const parsed = parse(prev.functionArn);
+      return {
+        display_functionArn: parsed.resource,
+        ...prev,
+      };
+    };
 
-  return c.html(
-    <Layout>
-      <h2>admin</h2>
-      <table class="ui table">
-        <thead>
-          <tr>
-            <th>name</th>
-            <th>event source mapping</th>
-            <th>action</th>
-            <th>action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {list.map((x) => {
-            const functionName = x.definition.functionName;
+    const fn_url = (prev: NonNullable<(typeof entry)["url"]>) => {
+      const parsed = parse(prev.functionArn);
+      return {
+        display_functionArn: parsed.resource,
+        ...prev,
+      };
+    };
 
-            return (
-              <tr>
-                <td>
-                  <FunctionLink definition={x.definition} url={x.url} />
-                </td>
-                <td>
-                  {x.mapping ? (
-                    <EventSourceMappingCell mapping={x.mapping} />
-                  ) : (
-                    "<BLANK>"
-                  )}
-                </td>
-                <td>
-                  <SynchronizeUrlButton functionName={functionName} />
-                </td>
-                <td>
-                  <SynchronizeEventButton functionName={functionName} />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    const fn_mapping = (prev: NonNullable<(typeof entry)["mapping"]>) => {
+      return {
+        display_functionArn: parse(prev.functionArn).resource,
+        display_eventSourceArn: parse(prev.eventSourceArn).resource,
+        ...prev,
+      };
+    };
 
-      <h3>action</h3>
+    const definition = entry.definition
+      ? fn_definition(entry.definition)
+      : null;
+    const url = entry.url ? fn_url(entry.url) : null;
+    const mapping = entry.mapping ? fn_mapping(entry.mapping) : null;
 
-      <form method="post" action="/admin/lookup/synchronize/list">
-        <button class="ui primary button" type="submit">
-          synchronize
-        </button>
-      </form>
+    return {
+      definition,
+      url,
+      mapping,
+    };
+  });
 
-      <form method="post" action="/admin/lookup/reset">
-        <button class="ui button" type="submit">
-          reset
-        </button>
-      </form>
-    </Layout>,
-  );
+  const result: MyResponse = {
+    tag: "render",
+    file: "admin/lookup_index",
+    payload: { list },
+  };
+  return MyResponse.respond(c, result);
 });
 
 // TODO: 전체 갱신은 무식하지만 확실한 방법
-app.post("/reset", async (c) => {
-  await FunctionUrlService.reset();
+app.post("/truncate", async (c) => {
   await FunctionDefinitionService.reset();
+  await FunctionUrlService.reset();
   await EventSourceMappingService.reset();
 
+  return c.redirect(indexLocation);
+});
+
+app.post("/reset", async (c) => {
+  const body = await c.req.parseBody();
+  const input = FunctionArnInput.parse(body);
+  const { functionArn } = input;
+
+  await FunctionUrlService.deleteByFunctionArn(functionArn);
+  await EventSourceMappingService.deleteByFunctionArn(functionArn);
   return c.redirect(indexLocation);
 });
 
