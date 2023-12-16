@@ -9,6 +9,8 @@ export type EventSourceMapping = {
   uuid: string;
   eventSourceArn: string;
   functionArn: string;
+  batchSize: number;
+  status: string;
   payload: unknown;
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;

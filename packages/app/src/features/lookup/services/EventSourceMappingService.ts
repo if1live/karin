@@ -39,6 +39,8 @@ export const EventSourceMappingService = {
           uuid,
           eventSourceArn: input.EventSourceArn ?? "",
           functionArn: input.FunctionArn ?? "",
+          batchSize: input.BatchSize ?? 999,
+          status: input.State ?? "",
           payload: JSON.stringify(input),
         })
         .execute();
