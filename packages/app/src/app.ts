@@ -5,7 +5,6 @@ import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-import { Layout } from "./components/index.js";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import {
   queueAdmin,
@@ -17,6 +16,7 @@ import { upstashController } from "./features/upstash/index.js";
 import { engine } from "./instances/index.js";
 import * as settings from "./settings.js";
 import { errorHandler } from "./system/errors.js";
+import { MyResponse } from "./system/index.js";
 import { livereloadMiddleware } from "./system/middlewares.js";
 
 export const app = new Hono();
@@ -56,6 +56,7 @@ if (settings.NODE_ENV) {
   app.use("*", livereloadMiddleware());
 }
 
+// TODO: 개발환경에서는 인증 없는게 낫나?
 const myauth = basicAuth({
   username: settings.ADMIN_ID,
   password: settings.ADMIN_PW,
@@ -82,18 +83,14 @@ app.get(`${prefix_site}/`, async (c) => {
   const ts = Date.now();
   const filename = filenames[ts % filenames.length];
   const fp = `/static/images/${filename}`;
-
-  return c.html(
-    <Layout>
-      <h1>karin</h1>
-      <img class="ui large image" src={fp} alt="karin" />
-      <ul>
-        <li>
-          <a href="/s/lookup">lookup</a>
-        </li>
-      </ul>
-    </Layout>,
-  );
+  const resp: MyResponse = {
+    tag: "render",
+    file: "index",
+    payload: {
+      title_image: fp,
+    },
+  };
+  return MyResponse.respond(c, resp);
 });
 
 // 운영 최상위
