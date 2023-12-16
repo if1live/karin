@@ -65,7 +65,7 @@ app.get(`${prefix_site}/`, async (c) => {
           <a href="/s/lookup">lookup</a>
         </li>
       </ul>
-    </Layout>
+    </Layout>,
   );
 });
 

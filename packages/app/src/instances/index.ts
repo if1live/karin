@@ -17,4 +17,3 @@ export const engine = new Liquid({
   extname: ".liquid",
   cache: settings.NODE_ENV === "production",
 });
-

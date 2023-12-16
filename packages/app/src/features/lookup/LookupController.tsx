@@ -21,6 +21,6 @@ app.get("", async (c) => {
           </li>
         ))}
       </ul>
-    </Layout>
+    </Layout>,
   );
 });

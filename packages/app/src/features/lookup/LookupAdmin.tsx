@@ -78,7 +78,7 @@ app.get("", async (c) => {
           reset
         </button>
       </form>
-    </Layout>
+    </Layout>,
   );
 });
 
