@@ -36,6 +36,12 @@ app.onError(async (err, c) => {
   return errorHandler(err, c);
 });
 
+app.notFound(async (c) => {
+  // TODO: logging library?
+  console.log(`404: ${c.req.method} ${c.req.url}`);
+  throw new HTTPException(404, { message: "not found" });
+});
+
 app.use("*", logger());
 app.get("*", prettyJSON());
 
@@ -88,9 +94,3 @@ app.route(`${prefix_site}${upstashController.resource}`, upstashController.app);
 app.route(`${prefix_admin}${sysAdmin.resource}`, sysAdmin.app);
 app.route(`${prefix_admin}${lookupAdmin.resource}`, lookupAdmin.app);
 app.route(`${prefix_admin}${queueAdmin.resource}`, queueAdmin.app);
-
-app.use("*", async (c) => {
-  // TODO: logging library?
-  console.log(`404: ${c.req.method} ${c.req.url}`);
-  throw new HTTPException(404, { message: "not found" });
-});
