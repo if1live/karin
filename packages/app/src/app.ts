@@ -2,6 +2,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Context, Hono } from "hono";
 import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
+import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import {
@@ -34,6 +35,7 @@ app.onError(async (err, c) => {
   return errorHandler(err, c);
 });
 
+app.use("*", logger());
 app.get("*", prettyJSON());
 
 if (settings.NODE_ENV) {
