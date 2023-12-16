@@ -20,7 +20,3 @@ app.get("/errors/plain", async (c) => {
 app.get("/errors/http", async (c) => {
   throw new HTTPException(403, { message: "hono-http-exception" });
 });
-
-app.get("/jsx", (c) => {
-  return c.html((<h1>jsx</h1>) as any);
-});

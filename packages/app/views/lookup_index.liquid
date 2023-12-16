@@ -2,7 +2,35 @@
 
 {% block content %}
   <h1>lookup</h1>
-  <p>
-    TODO
-  </p>
+
+  <h2>
+    pub
+    <small>{{ entries_pub.length }}</small>
+  </h2>
+
+  <ul>
+    {% for entry in entries_pub %}
+      <li>
+        <a href="{{ entry.url.functionUrl }}">
+          {{ entry.definition.functionName }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2>
+    priv
+    <small>{{ entries_priv.length }}</small>
+  </h2>
+
+  <ul>
+    {% for entry in entries_priv %}
+      <li>
+        <a href="{{ entry.url.functionUrl }}">
+          {{ entry.definition.functionName }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
 {% endblock %}
