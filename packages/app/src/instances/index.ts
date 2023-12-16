@@ -6,7 +6,7 @@ export * from "./rdbms.js";
 export * from "./aws.js";
 
 // fly.io upstash redis 쓰러면 family 6 필수
-export const redis = new Redis(settings.FLY_REDIS_URL, {
+export const redis = new Redis(settings.REDIS_URL, {
   lazyConnect: true,
   family: 6,
 });
