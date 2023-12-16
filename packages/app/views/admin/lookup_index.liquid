@@ -11,7 +11,11 @@
       {% assign functionName = data_fn.functionName %}
       {% assign functionArn = data_fn.functionArn %}
 
-      <h2>{{ functionName }}</h2>
+      <h2>
+        <a href="/admin/lookup/inspect?functionName={{functionName}}" target="_blank">
+          {{ functionName }}
+        </a>
+      </h2>
 
       <div class="ui small labels">
         {% if data_url %}

@@ -1,0 +1,47 @@
+{% layout "layouts/base_admin.liquid" %}
+
+{% block content %}
+  <h1>consumer</h1>
+
+  <h2>event source mappings</h2>
+  <table class="ui selectable table">
+    <thead>
+      <tr>
+        <th>event source</th>
+        <th>function</th>
+        <th>action</th>
+        <th>etc</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+        <tr>
+          <td>
+            <dl>
+              <dt>sqs</dt>
+              <dd>{{ entry.display_eventSourceArn }}</dd>
+              <dt>batch size</dt>
+              <dd>{{ entry.batchSize }}</dd>
+            </dl>
+          </td>
+          <td>{{ entry.display_functionArn }}</td>
+          <td>
+            <p>
+              <button class="ui mini primary button">start</button>
+              <br/>
+              <button class="ui mini secondary button">stop</button>
+              <br/>
+              <button class="ui mini negative button">flush</button>
+            </p>
+          </td>
+          <td>
+            <details>
+              <summary>details</summary>
+<pre>{{ entry | json: 2}}</pre>
+            </details>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

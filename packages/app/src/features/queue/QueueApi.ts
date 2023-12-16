@@ -1,11 +1,10 @@
-import {
-  SendMessageBatchRequest,
-  SendMessageRequest,
-} from "@aws-sdk/client-sqs";
+import { SendMessageRequest } from "@aws-sdk/client-sqs";
 import { Hono } from "hono";
 
 export const resource = "/queue/" as const;
 export const app = new Hono();
+
+// TODO:
 
 app.post("*", async (c) => {
   // application/x-amz-json-1.0

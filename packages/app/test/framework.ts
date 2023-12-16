@@ -1,3 +1,5 @@
+import { Redis } from "ioredis";
+import * as RedisMock from "ioredis-mock";
 import { CamelCasePlugin, Kysely, ParseJSONResultsPlugin } from "kysely";
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
 import { selectDialect } from "../src/instances/rdbms.js";
@@ -68,5 +70,14 @@ export const TestDatabase = {
     for (const tableName of tables) {
       await db.schema.dropTable(tableName).execute();
     }
+  },
+};
+
+export const TestRedis = {
+  create(): Redis {
+    type MockConstructor = typeof RedisMock.redisMock;
+    const Mock = RedisMock.default as any as MockConstructor;
+    const redis: Redis = new Mock();
+    return redis;
   },
 };

@@ -1,18 +1,37 @@
-import crypto from "node:crypto";
-import { InvokeCommand } from "@aws-sdk/client-lambda";
-import { SQSEvent, SQSRecord } from "aws-lambda";
+import { parse } from "@aws-sdk/util-arn-parser";
 import { Hono } from "hono";
-import { lambdaClient } from "../../instances/index.js";
-import * as settings from "../../settings.js";
+import * as z from "zod";
+import { redis } from "../../instances/index.js";
 import { MyRequest, MyResponse } from "../../system/index.js";
-import { ActionMapping, actionMappings } from "./core.js";
+import { EventSourceMappingService } from "../lookup/services/EventSourceMappingService.js";
+import { QueueService } from "./services/QueueService.js";
 
 export const resource = "/queue" as const;
 export const app = new Hono();
 
+const indexLocation = `/admin${resource}`;
+
+const QueueNameInput = z.object({
+  queueName: z.string(),
+});
+type QueueNameInput = z.infer<typeof QueueNameInput>;
+
 export class QueueAdmin {
   async index(req: MyRequest): Promise<MyResponse> {
-    const payload = {};
+    const founds = await EventSourceMappingService.list();
+    const entries = founds.map((x) => {
+      const display_eventSourceArn = parse(x.eventSourceArn).resource;
+      const display_functionArn = parse(x.functionArn).resource;
+      return {
+        ...x,
+        display_eventSourceArn,
+        display_functionArn,
+      };
+    });
+
+    const payload = {
+      entries,
+    };
     const file = "admin/queue_index";
     return {
       tag: "render",
@@ -30,64 +49,24 @@ app.get("", async (c) => {
   return MyResponse.respond(c, resp);
 });
 
-/*
-for (const mapping of actionMappings) {
-  // TODO: consumer? 이런건 어디에 넣는게 좋을까?
-  // TODO: consumer?
-  channel.consume(
-    mapping.queue,
-    async (msg) => {
-      const now = new Date();
+app.post("/purge", async (c) => {
+  const body = await c.req.parseBody();
+  const input = QueueNameInput.parse(body);
+  const { queueName: name } = input;
 
-      const body_naive = msg?.content?.toString("utf-8");
-      const body = body_naive ?? "";
-      const md5OfBody = crypto.createHash("md5").update(body).digest("hex");
+  const s = new QueueService(redis, name);
+  await s.purge();
 
-      const messageId = crypto.randomUUID();
+  return c.redirect(indexLocation);
+});
 
-      const region = settings.AWS_REGION;
-      const arn = `arn:aws:sqs:${region}:123456789012:${mapping.queue}`;
+app.get("/inspect", async (c) => {
+  const body = c.req.query();
+  const input = QueueNameInput.parse(body);
+  const { queueName: name } = input;
 
-      // TODO: 내용물 그럴싸하게 가라치기
-      const record: SQSRecord = {
-        messageId,
-        receiptHandle: "",
-        body,
-        md5OfBody,
-        attributes: {
-          ApproximateReceiveCount: "1",
-          SenderId: "127.0.0.1",
-          SentTimestamp: now.getTime().toString(),
-          ApproximateFirstReceiveTimestamp: now.getTime().toString(),
-        },
-        messageAttributes: {},
-        eventSource: "aws:sqs",
-        eventSourceARN: arn,
-        awsRegion: settings.AWS_REGION,
-      };
+  const s = new QueueService(redis, name);
+  const result = await s.inspect();
 
-      const event: SQSEvent = {
-        Records: [record],
-      };
-
-      try {
-        // console.log(" [x] Received %s", msg.content.toString());
-        const output = await lambdaClient.send(
-          new InvokeCommand({
-            FunctionName: mapping.lambda,
-            Payload: JSON.stringify(event),
-            InvocationType: "Event",
-          }),
-        );
-      } catch (e) {
-        // TODO: 적당한 에러처리 필요
-        console.error(e);
-      }
-    },
-    {
-      noAck: true,
-    },
-  );
-  console.log("prepare consume", mapping.queue);
-}
-*/
+  return c.json(result as any);
+});

@@ -2,4 +2,50 @@
 
 {% block content %}
   <h1>queue</h1>
+
+  <table class="ui selectable table">
+    <thead>
+      <tr>
+        <th>queue</th>
+        <th>action</th>
+        <th>etc</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+        {% assign queueName = entry.display_eventSourceArn %}
+        <tr>
+          <td>
+            <dl>
+              <dt>sqs</dt>
+              <dd>
+                <a href="/admin/queue/inspect?queueName={{queueName}}" target="_blank">
+                  {{ queueName }}
+                </a>
+              </dd>
+              <dt>function</dt>
+              <dd>{{ entry.display_functionArn }}</dd>
+            </dl>
+          </td>
+          <td>
+            <form method="post" action="/admin/queue/purge">
+              <input
+                type="hidden"
+                name="queueName"
+                value={{queueName}} />
+              <button class="ui mini negative button" type="submit">
+                purge
+              </button>
+            </form>
+          </td>
+          <td>
+            <details>
+              <summary>details</summary>
+<pre>{{ entry | json: 2}}</pre>
+            </details>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
