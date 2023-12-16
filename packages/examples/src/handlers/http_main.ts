@@ -13,12 +13,15 @@ import {
   createSqsClient_dev,
   redis,
   sqsEndpoint_elasticmq,
-  sqsEndpoint_shiroko,
+  sqsEndpoint_karin,
 } from "../instances.js";
 import { ConnectionRepository, ConnectionService } from "../repositories.js";
 import * as settings from "../settings.js";
 
-const queueName = `toki-example-${settings.STAGE}`;
+const queueName = `karin-example-${settings.STAGE}`;
+
+const prefix_elasticmq = "/elasticmq";
+const prefix_karin = "/karin";
 
 const SendReq = z.object({
   message: z.string().optional(),
@@ -36,10 +39,33 @@ export const dispatch: APIGatewayProxyHandlerV2 = async (event, context) => {
     return httpReq.method === method && httpReq.path === path;
   };
 
+  const handle_sqs = async (
+    prefix: string,
+    client: SQSClient,
+    queueUrl: string,
+  ): Promise<APIGatewayProxyResultV2 | undefined> => {
+    if (check("POST", `${prefix}/send`)) {
+      const req = SendReq.parse(event.queryStringParameters);
+      const output = await fn_sqs_send(req, client, queueUrl);
+      return respond_200(output);
+    }
+
+    if (check("POST", `${prefix}/send-batch`)) {
+      const req = SendReq.parse(event.queryStringParameters);
+      const output = await fn_sqs_sendBatch(req, client, queueUrl);
+      return respond_200(output);
+    }
+
+    if (check("POST", `${prefix}/purge`)) {
+      const output = await fn_sqs_purge(client, queueUrl);
+      return respond_200(output);
+    }
+  };
+
   if (check("GET", "/")) {
     return {
       statusCode: 200,
-      body: "toki-example",
+      body: "karin-example",
     };
   }
 
@@ -59,48 +85,26 @@ export const dispatch: APIGatewayProxyHandlerV2 = async (event, context) => {
     return respond_200({ tag: "broadcast", result });
   }
 
-  if (check("POST", "/elasticmq/send")) {
-    const req = SendReq.parse(event.queryStringParameters);
+  if (httpReq.path.startsWith(prefix_elasticmq)) {
     const endpoint = sqsEndpoint_elasticmq;
     const queueUrl = createQueueUrl_dev(endpoint, queueName);
     const client = createSqsClient_dev(endpoint);
-    const output = await fn_sqs_send(req, client, queueUrl);
-    return respond_200(output);
+
+    const result = await handle_sqs(prefix_elasticmq, client, queueUrl);
+    if (result) {
+      return result;
+    }
   }
 
-  if (check("POST", "/elasticmq/send-batch")) {
-    const req = SendReq.parse(event.queryStringParameters);
-    const endpoint = sqsEndpoint_elasticmq;
-    const queueUrl = createQueueUrl_dev(endpoint, queueName);
-    const client = createSqsClient_dev(endpoint);
-    const output = await fn_sqs_sendBatch(req, client, queueUrl);
-    return respond_200(output);
-  }
-
-  if (check("POST", "/elasticmq/purge")) {
-    const endpoint = sqsEndpoint_elasticmq;
-    const queueUrl = createQueueUrl_dev(endpoint, queueName);
-    const client = createSqsClient_dev(endpoint);
-    const output = await fn_sqs_purge(client, queueUrl);
-    return respond_200(output);
-  }
-
-  if (check("POST", "/shiroko/send")) {
-    const req = SendReq.parse(event.queryStringParameters);
-    const endpoint = sqsEndpoint_shiroko;
+  if (httpReq.path.startsWith(prefix_karin)) {
+    const endpoint = sqsEndpoint_karin;
     const queueUrl = createQueueUrl_prod(queueName);
     const client = createSqsClient_dev(endpoint);
-    const output = await fn_sqs_send(req, client, queueUrl);
-    return respond_200(output);
-  }
 
-  if (check("POST", "/shiroko/send-batch")) {
-    const req = SendReq.parse(event.queryStringParameters);
-    const endpoint = sqsEndpoint_shiroko;
-    const queueUrl = createQueueUrl_prod(queueName);
-    const client = createSqsClient_dev(endpoint);
-    const output = await fn_sqs_sendBatch(req, client, queueUrl);
-    return respond_200(output);
+    const result = await handle_sqs(prefix_karin, client, queueUrl);
+    if (result) {
+      return result;
+    }
   }
 
   // else...

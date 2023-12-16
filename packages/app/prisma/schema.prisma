@@ -57,7 +57,7 @@ model FunctionDefinition {
   created_at DateTime @default(now())
   updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
 
-  @@map("miyako_function_definition")
+  @@map("karin_function_definition")
 }
 
 // FunctionUrlConfig
@@ -75,7 +75,7 @@ model FunctionUrl {
   created_at DateTime @default(now())
   updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
 
-  @@map("miyako_function_url")
+  @@map("karin_function_url")
 }
 
 // Lambda <-> SQS
@@ -95,5 +95,5 @@ model EventSourceMapping {
   created_at DateTime @default(now())
   updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
 
-  @@map("miyako_event_source_mapping")
+  @@map("karin_event_source_mapping")
 }

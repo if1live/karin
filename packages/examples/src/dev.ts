@@ -8,7 +8,7 @@ import * as settings from "./settings.js";
 
 const definitions: FunctionDefinition[] = [
   {
-    name: `toki-example-${settings.STAGE}-httpMain`,
+    name: `karin-example-${settings.STAGE}-httpMain`,
     handler: http_main.dispatch,
     events: [
       { httpApi: { route: "ANY /" } },
@@ -16,12 +16,12 @@ const definitions: FunctionDefinition[] = [
     ],
   },
   {
-    name: `toki-example-${settings.STAGE}-sqsMain`,
+    name: `karin-example-${settings.STAGE}-sqsMain`,
     handler: sqs_main.dispatch,
     events: [
       {
         sqs: {
-          queueName: `toki-example-${settings.STAGE}`,
+          queueName: `karin-example-${settings.STAGE}`,
           batchSize: 1,
           enabled: true,
         },
@@ -29,7 +29,7 @@ const definitions: FunctionDefinition[] = [
     ],
   },
   {
-    name: `toki-example-${settings.STAGE}-websocketConnection`,
+    name: `karin-example-${settings.STAGE}-websocketConnection`,
     handler: ws_main.handle_connection,
     events: [
       { websocket: { route: "$connect" } },
@@ -37,7 +37,7 @@ const definitions: FunctionDefinition[] = [
     ],
   },
   {
-    name: `toki-example-${settings.STAGE}-websocketDefault`,
+    name: `karin-example-${settings.STAGE}-websocketDefault`,
     handler: ws_main.handle_default,
     events: [{ websocket: { route: "$default" } }],
   },

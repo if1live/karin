@@ -49,7 +49,7 @@ export const TestDatabase = {
       plugins: [
         new ParseJSONResultsPlugin(),
         new CamelCasePlugin(),
-        new TablePrefixPlugin({ prefix: "miyako" }),
+        new TablePrefixPlugin({ prefix: "karin" }),
       ],
       // log: ["query", "error"],
     });

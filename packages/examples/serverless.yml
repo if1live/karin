@@ -1,4 +1,4 @@
-service: toki-example
+service: karin-example
 
 useDotenv: true
 
@@ -41,7 +41,7 @@ provider:
             - sqs:SendMessage
             - sqs:PurgeQueue
           Resource:
-            - arn:aws:sqs:${self:provider.region}:${aws:accountId}:toki-example-${self:provider.stage}
+            - arn:aws:sqs:${self:provider.region}:${aws:accountId}:karin-example-${self:provider.stage}
 
 package:
   individually: true
@@ -71,7 +71,7 @@ functions:
         - artifact/sqs_main.mjs*
     events:
       - sqs:
-          arn: arn:aws:sqs:${self:provider.region}:${aws:accountId}:toki-example-${self:provider.stage}
+          arn: arn:aws:sqs:${self:provider.region}:${aws:accountId}:karin-example-${self:provider.stage}
           batchSize: 1
           enabled: false
 
@@ -99,7 +99,7 @@ resources:
     SQSExampleQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: toki-example-${self:provider.stage}
+        QueueName: karin-example-${self:provider.stage}
         VisibilityTimeout: 60
         MessageRetentionPeriod: 1209600 # 14 days
 

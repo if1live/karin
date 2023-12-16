@@ -13,7 +13,7 @@ const fp = path.join(dirname, "../src/tables/codegen.ts");
 
 let content = await fs.readFile(fp, "utf-8");
 content = content.replaceAll("    ", "  ");
-content = content.replaceAll("miyako", "");
+content = content.replaceAll("karin", "");
 
 const re = /\s+([A-Z])(\w+): (\w+);$/;
 let lines = content.split("\n");

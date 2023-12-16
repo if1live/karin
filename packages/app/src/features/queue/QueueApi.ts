@@ -64,7 +64,7 @@ app.post("*", async (c) => {
       z: req.QueueUrl,
     });
     // TODO
-    // '{"DelaySeconds":5,"MessageBody":"hello","QueueUrl":"http://localhost:4000/queue/toki-example-dev"}'
+    // '{"DelaySeconds":5,"MessageBody":"hello","QueueUrl":"http://localhost:4000/queue/karin-example-dev"}'
     return c.text(decodedString);
   }
 

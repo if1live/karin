@@ -9,7 +9,7 @@ await redis.connect();
 
 export const sqsEndpoint_elasticmq = "http://127.0.0.1:9324";
 
-export const sqsEndpoint_shiroko = "http://127.0.0.1:4000/api/queue";
+export const sqsEndpoint_karin = "http://127.0.0.1:4000/api/queue";
 
 export const createSqsClient_prod = () => {
   return new SQSClient({
