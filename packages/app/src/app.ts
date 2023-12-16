@@ -27,7 +27,7 @@ Disallow: /
 `.trimStart();
 
 const prefix_api = "/api" as const;
-const prefix_site = "/r" as const;
+const prefix_site = "/s" as const;
 const prefix_admin = "/admin" as const;
 
 app.onError(async (err, c) => {
