@@ -1,6 +1,6 @@
 resource "aws_iam_user" "main" {
-  name = "miyako"
-  path = "/miyako/"
+  name = "karin"
+  path = "/karin/"
 }
 
 resource "aws_iam_access_key" "main" {
@@ -9,7 +9,7 @@ resource "aws_iam_access_key" "main" {
 
 # https://docs.aws.amazon.com/lambda/latest/dg/access-control-identity-based.html
 resource "aws_iam_user_policy" "main_ro" {
-  name = "miyako-app"
+  name = "karin"
   user = aws_iam_user.main.name
 
   policy = <<EOF
