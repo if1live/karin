@@ -12,7 +12,9 @@ import {
 import { sysAdmin } from "./features/sys/index.js";
 import { upstashController } from "./features/upstash/index.js";
 import { engine } from "./instances/index.js";
+import * as settings from "./settings.js";
 import { errorHandler } from "./system/errors.js";
+import { livereloadMiddleware } from "./system/middlewares.js";
 
 export const app = new Hono();
 
@@ -33,6 +35,10 @@ app.onError(async (err, c) => {
 });
 
 app.get("*", prettyJSON());
+
+if (settings.NODE_ENV) {
+  app.use("*", livereloadMiddleware());
+}
 
 // TODO: hono/node-server 구현에 버그가 있어서 compress 미들웨어 있으면 c.html이 plain text로 응답한다.
 // https://github.com/honojs/node-server/issues/104

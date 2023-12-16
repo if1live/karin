@@ -51,6 +51,7 @@
     "esbuild": "^0.19.8",
     "globstar": "^1.0.0",
     "ioredis-mock": "^8.9.0",
+    "livereload": "^0.9.3",
     "livereloader": "^0.1.0",
     "prisma": "^5.7.0",
     "prisma-kysely": "^1.7.1",
