@@ -17,12 +17,7 @@ if (settings.NODE_ENV === "development") {
   await main_livereload();
 }
 
-serve(
-  {
-    fetch: app.fetch,
-    port: 4000,
-  },
-  (info) => {
-    console.log(`Listening on http://localhost:${info.port}`);
-  },
-);
+const port = 4000;
+serve({ fetch: app.fetch, port }, (info) => {
+  console.log(`port=${port}, env=${settings.NODE_ENV}`);
+});
