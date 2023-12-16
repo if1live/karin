@@ -4,6 +4,7 @@ import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { Layout } from "./components/index.js";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import {
   queueAdmin,
@@ -52,15 +53,20 @@ app.get("/robots.txt", async (c) => {
 
 app.use("/static/*", serveStatic({ root: "./" }));
 
-app.get("/", async (c) => {
-  return c.redirect(`${prefix_site}/`);
-});
+app.get("/", async (c) => c.redirect(`${prefix_site}/`));
 
 // 공개 최상위
 app.get(`${prefix_site}`, async (c) => c.redirect(`${prefix_site}/`));
 app.get(`${prefix_site}/`, async (c) => {
-  const text = await engine.renderFile("index", {});
-  return c.html(text);
+  return c.html(
+    <Layout>
+      <ul>
+        <li>
+          <a href="/s/lookup">lookup</a>
+        </li>
+      </ul>
+    </Layout>
+  );
 });
 
 // 운영 최상위
