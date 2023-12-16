@@ -90,7 +90,7 @@ model EventSourceMapping {
   // arn:aws:lambda:ap-northeast-1:123456789012:function:toki-example-dev-sqsMain
   function_arn String @unique
 
-  batchSize Int
+  batch_size Int
   status    String
 
   payload Json
