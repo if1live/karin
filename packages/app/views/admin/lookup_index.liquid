@@ -13,6 +13,15 @@
 
       <h2>{{ functionName }}</h2>
 
+      <div class="ui small labels">
+        {% if data_url %}
+          <div class="ui violet label">url</div>
+        {% endif %}
+        {% if data_mapping %}
+          <div class="ui blue label">event</div>
+        {% endif %}
+      </div>
+
       <dl>
         {% if true %}
           <dt>short function arn</dt>
@@ -76,16 +85,19 @@
             event
           </button>
         </form>
-        <div class="or"></div>
-        <form method="post" action="/admin/lookup/reset">
-          <input
-            type="hidden"
-            name="functionArn"
-            value={{functionArn}} />
-          <button class="ui button" type="submit">
-            event
-          </button>
-        </form>
+
+        {% if data_url or data_mapping %}
+          <div class="or"></div>
+          <form method="post" action="/admin/lookup/reset">
+            <input
+              type="hidden"
+              name="functionArn"
+              value={{functionArn}} />
+            <button class="ui button" type="submit">
+              reset
+            </button>
+          </form>
+        {% endif %}
       </div>
 
     </div>
