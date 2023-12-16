@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { Layout } from "../../components/index.js";
 import { db } from "../../instances/rdbms.js";
 import { MyRequest, MyResponse } from "../../system/index.js";
 
@@ -44,10 +45,12 @@ export class LookupController {
 
 const controller = new LookupController();
 
-app.get("/", async (c) => {
-  const req = new MyRequest({});
-  const resp = await controller.index(req);
-  return MyResponse.respond(c, resp);
+app.get("", async (c) => {
+  return c.html(
+    <Layout>
+      <div>todo</div>
+    </Layout>
+  );
 });
 
 app.get("/list", async (c) => {
