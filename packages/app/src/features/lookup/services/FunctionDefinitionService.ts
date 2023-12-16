@@ -114,4 +114,13 @@ export const FunctionDefinitionService = {
     const result = await db.deleteFrom(table).execute();
     return result;
   },
+
+  async findByFunctionName(name: string) {
+    const found = await db
+      .selectFrom(table)
+      .selectAll()
+      .where("functionName", "=", name)
+      .executeTakeFirst();
+    return found;
+  },
 };

@@ -58,4 +58,13 @@ export const FunctionUrlService = {
   async reset() {
     await db.deleteFrom(table).execute();
   },
+
+  async findByFunctionArn(arn: string) {
+    const found = await db
+      .selectFrom(table)
+      .selectAll()
+      .where("functionArn", "=", arn)
+      .executeTakeFirst();
+    return found;
+  },
 };

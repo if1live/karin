@@ -17,10 +17,10 @@ export const app = new Hono();
 
 const indexLocation = `/admin${resource}`;
 
-const SynchronizeUrlInput = z.object({
+const FunctionNameInput = z.object({
   functionName: z.string(),
 });
-type SynchronizeUrlInput = z.infer<typeof SynchronizeUrlInput>;
+type FunctionNameInput = z.infer<typeof FunctionNameInput>;
 
 app.get("", async (c) => {
   const list = await LookupService.load();
@@ -100,7 +100,7 @@ app.post("/synchronize/list", async (c) => {
 
 app.post("/synchronize/url", async (c) => {
   const body = await c.req.parseBody();
-  const input = SynchronizeUrlInput.parse(body);
+  const input = FunctionNameInput.parse(body);
 
   const founds = await FunctionUrlService.fetch(input);
   const first = founds[0];
@@ -111,7 +111,7 @@ app.post("/synchronize/url", async (c) => {
 
 app.post("/synchronize/event", async (c) => {
   const body = await c.req.parseBody();
-  const input = SynchronizeUrlInput.parse(body);
+  const input = FunctionNameInput.parse(body);
 
   const founds = await EventSourceMappingService.fetch(input);
   const first = founds[0];
@@ -120,4 +120,27 @@ app.post("/synchronize/event", async (c) => {
     : null;
 
   return c.redirect(indexLocation);
+});
+
+// 디버깅 목적으로 상세 정보 뜯을 방법 열어두기
+app.get("/inspect", async (c) => {
+  const body = c.req.query();
+  const input = FunctionNameInput.parse(body);
+  const name = input.functionName;
+
+  const definition = await FunctionDefinitionService.findByFunctionName(name);
+  const arn = definition?.functionArn;
+
+  const url = arn ? await FunctionUrlService.findByFunctionArn(arn) : null;
+
+  const mapping = arn
+    ? await EventSourceMappingService.findByFunctionArn(arn)
+    : null;
+
+  const payload = {
+    definition: definition ?? null,
+    url: url ?? null,
+    mapping: mapping ?? null,
+  };
+  return c.json(payload as any);
 });

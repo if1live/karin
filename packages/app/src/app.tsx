@@ -37,7 +37,6 @@ app.onError(async (err, c) => {
   if (err instanceof HTTPException) {
     // HTTPException를 직접 제어하면 basicAuth가 무시되어버린다.
     const resp = err.getResponse();
-    console.log(resp);
     return resp;
   }
   // else...
