@@ -1,5 +1,6 @@
 import {
   EventSourceMappingConfiguration,
+  FunctionResponseType,
   ListEventSourceMappingsCommand,
 } from "@aws-sdk/client-lambda";
 import { lambdaClient } from "../../../instances/aws.js";
@@ -32,17 +33,26 @@ export const EventSourceMappingService = {
       .where("uuid", "=", uuid)
       .executeTakeFirst();
 
+    const functionResponseType: FunctionResponseType | null =
+      input.FunctionResponseTypes
+        ? input.FunctionResponseTypes[0] ?? null
+        : null;
+
+    const data = {
+      eventSourceArn: input.EventSourceArn ?? "",
+      functionArn: input.FunctionArn ?? "",
+      batchSize: input.BatchSize ?? null,
+      maximumBatchingWindow: input.MaximumBatchingWindowInSeconds ?? null,
+      maximumConcurrency: input.ScalingConfig?.MaximumConcurrency ?? null,
+      functionResponseType,
+      status: input.State ?? "",
+      payload: JSON.stringify(input),
+    };
+
     if (!found) {
       const result = await db
         .insertInto(table)
-        .values({
-          uuid,
-          eventSourceArn: input.EventSourceArn ?? "",
-          functionArn: input.FunctionArn ?? "",
-          batchSize: input.BatchSize ?? 999,
-          status: input.State ?? "",
-          payload: JSON.stringify(input),
-        })
+        .values({ ...data, uuid })
         .execute();
       return result;
     }
@@ -51,11 +61,7 @@ export const EventSourceMappingService = {
     const result = await db
       .updateTable(table)
       .where("uuid", "=", uuid)
-      .set({
-        eventSourceArn: input.EventSourceArn ?? "",
-        functionArn: input.FunctionArn ?? "",
-        payload: JSON.stringify(input),
-      })
+      .set(data)
       .execute();
     return result;
   },

@@ -46,7 +46,16 @@
           <dd>{{ data_mapping.display_eventSourceArn }}</dd>
 
           <dt>batch size</dt>
-          <dd>{{ data_mapping.batchSize }}</dd>
+          <dd>{{ data_mapping.batchSize | default: 'NULL' }}</dd>
+
+          <dt>maximum batching window</dt>
+          <dd>{{ data_mapping.maximumBatchingWindow | default: 'NULL' }}</dd>
+
+          <dt>maximum concurrency</dt>
+          <dd>{{ data_mapping.maximumConcurrency | default: 'NULL' }}</dd>
+
+          <dt>function response type</dt>
+          <dd>{{ data_mapping.functionResponseType | default: 'NULL' }}</dd>
         {% endif %}
       </dl>
 

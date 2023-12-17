@@ -9,25 +9,29 @@ export type EventSourceMapping = {
   uuid: string;
   eventSourceArn: string;
   functionArn: string;
-  batchSize: number;
+  batchSize: number | null;
+  maximumBatchingWindow: number | null;
+  maximumConcurrency: number | null;
+  functionResponseType: string | null;
   status: string;
   payload: unknown;
-  createdAt: Generated<Timestamp>;
-  updatedAt: Generated<Timestamp>;
 };
 export type FunctionDefinition = {
   id: Generated<number>;
   functionName: string;
   functionArn: string;
   payload: unknown;
-  createdAt: Generated<Timestamp>;
-  updatedAt: Generated<Timestamp>;
 };
 export type FunctionUrl = {
   id: Generated<number>;
   functionArn: string;
   functionUrl: string;
   payload: unknown;
+};
+export type User = {
+  id: Generated<number>;
+  username: string;
+  password: string;
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
 };
@@ -35,4 +39,5 @@ export type DB = {
   eventSourceMapping: EventSourceMapping;
   functionDefinition: FunctionDefinition;
   functionUrl: FunctionUrl;
+  user: User;
 };

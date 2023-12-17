@@ -45,6 +45,19 @@ datasource db {
 // 모델 이름은 PascalCase로 작성하고 @@map으로 db테이블 이름을 붙인다
 // 필드 이름까지 소문자로 바꾸는건 노가다가 심해서 보류
 
+// TODO: 유저 인증을 공유할 방법이 있을까?
+model User {
+  id Int @id @default(autoincrement())
+
+  username String @unique
+  password String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
+
+  @@map("karin_user")
+}
+
 // FunctionConfiguration
 model FunctionDefinition {
   id Int @id @default(autoincrement())
@@ -53,9 +66,6 @@ model FunctionDefinition {
   function_arn  String @unique
 
   payload Json
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
 
   @@map("karin_function_definition")
 }
@@ -72,14 +82,14 @@ model FunctionUrl {
 
   payload Json
 
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
-
   @@map("karin_function_url")
 }
 
 // Lambda <-> SQS
 // EventSourceMappingConfiguration
+// https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml#sqs
+// 속성 이름은 AWS보다 serverless.yml를 우선적으로 선택
+// aws lambda web console에 보이는 속성은 다 넣음
 model EventSourceMapping {
   id   Int    @id @default(autoincrement())
   uuid String @unique
@@ -90,13 +100,26 @@ model EventSourceMapping {
   // arn:aws:lambda:ap-northeast-1:123456789012:function:toki-example-dev-sqsMain
   function_arn String @unique
 
-  batch_size Int
-  status    String
+  // The number of records in each batch to send to the function.
+  // The maximum is 10,000 for standard queues and 10 for FIFO queues.
+  batch_size Int?
+
+  // The maximum amount of time to gather records before invoking the function, in seconds.
+  // When the batch size is greater than 10, set the batch window to at least 1 second.
+  // minimum is 0 and the maximum is 300 (seconds)
+  maximum_batching_window Int?
+
+  // The maximum number of concurrent function instances that the SQS event source can invoke.
+  // Specify a value between 2 and 1000. To deactivate, leave the box empty.
+  maximum_concurrency Int?
+
+  // value: "ReportBatchItemFailures" or blank?
+  // Allow your function to return a partial successful response for a batch of records.
+  function_response_type String?
+
+  status String
 
   payload Json
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(dbgenerated("CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)")) @updatedAt
 
   @@map("karin_event_source_mapping")
 }
