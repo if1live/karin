@@ -8,30 +8,15 @@ import {
   SendMessageRequest,
   SendMessageResult,
 } from "@aws-sdk/client-sqs";
-import { MetadataBearer } from "@aws-sdk/types";
+import { ResponseMetadata } from "@aws-sdk/types";
 import { Context, Hono } from "hono";
-import XmlJs from "xml-js";
 import { redis } from "../../instances/index.js";
+import * as protocols from "./protocols.js";
 import { QueueService } from "./services/QueueService.js";
-import { MyMessage } from "./types.js";
+import { MyMessage, SdkAction, SdkResult } from "./types.js";
 
 export const resource = "/queue/" as const;
 export const app = new Hono();
-
-const contentType_json = "application/x-amz-json-1.0";
-const contentType_urlencoded = "application/x-www-form-urlencoded";
-
-type SdkAction =
-  | { action: "SendMessage"; request: SendMessageRequest }
-  | { action: "SendMessageBatch"; request: SendMessageBatchRequest }
-  | { action: "PurgeQueue"; request: PurgeQueueRequest };
-
-type SdkResult =
-  | { action: "SendMessage"; value: SendMessageResult }
-  | { action: "SendMessageBatch"; value: SendMessageBatchResult }
-  | { action: "PurgeQueue"; value: object };
-
-type ResponseMetadata = MetadataBearer["$metadata"];
 
 // TODO:
 app.post("*", async (c) => {
@@ -67,7 +52,7 @@ app.post("*", async (c) => {
     connection,
   };
 
-  const req = await parseReq(c);
+  const req = await protocols.parse(c);
   const output = await perform(req);
   const result: SdkResult = {
     action: req.action,
@@ -76,144 +61,8 @@ app.post("*", async (c) => {
   const metadata: ResponseMetadata = {
     requestId: crypto.randomUUID(),
   };
-  return serialize(c, result, metadata);
+  return protocols.serialize(c, result, metadata);
 });
-
-const serialize = (
-  c: Context,
-  result: SdkResult,
-  metadata: ResponseMetadata,
-) => {
-  const contentType = c.req.header("content-type");
-  switch (contentType) {
-    case contentType_json:
-      return serialize_json(c, result, metadata);
-    case contentType_urlencoded:
-      return serialize_xml(c, result, metadata);
-    default: {
-      throw new Error("not supported content-type", {
-        cause: { contentType },
-      });
-    }
-  }
-};
-
-const serialize_json = (
-  c: Context,
-  result: SdkResult,
-  metadata: ResponseMetadata,
-) => {
-  const resp: SdkResult["value"] & MetadataBearer = {
-    $metadata: metadata,
-    ...result.value,
-  };
-  return c.json(resp as any);
-};
-
-/**
- * aws-sdk 버전 올라가면 json으로 바뀌는데 람다 런타임은 aws-sdk가 구버전이라서 xml 대응
- * @link https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-xml-api-responses.html
- */
-const serialize_xml = (
-  c: Context,
-  result: SdkResult,
-  metadata: ResponseMetadata,
-) => {
-  const responseTagName = `${result.action}Response`;
-  const resultTagName = `${result.action}Result`;
-
-  const entries = Object.entries(result.value).map(([key, value]) => {
-    return [key, { _text: value }];
-  });
-  const content = Object.fromEntries(entries);
-
-  const data = {
-    [responseTagName]: {
-      _attributes: {
-        xmlns: "https://sqs.us-east-2.amazonaws.com/doc/2012-11-05/",
-        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "xsi:type": responseTagName,
-      },
-      [resultTagName]: content,
-      ResponseMetadata: {
-        RequestId: { _text: metadata.requestId },
-      },
-    },
-  };
-
-  // TODO: content-type 야매로 해도 aws-sdk에서 돌더라
-  const xml = XmlJs.js2xml(data, { compact: true, indentText: true });
-  return c.text(xml);
-};
-
-const parseReq = async (c: Context) => {
-  const contentType = c.req.header("content-type");
-  switch (contentType) {
-    case contentType_json:
-      return await parseReq_json(c);
-    case contentType_urlencoded:
-      return await parseReq_urlencoded(c);
-    default: {
-      throw new Error("not supported content-type", {
-        cause: { contentType },
-      });
-    }
-  }
-};
-
-const parseReq_urlencoded = async <T>(c: Context): Promise<SdkAction> => {
-  const body = await c.req.parseBody();
-  const { Action: action, ...rest } = body;
-  const payload = rest as any as SdkAction["request"];
-
-  switch (action) {
-    case "SendMessage": {
-      return {
-        action: "SendMessage",
-        request: payload as SendMessageRequest,
-      };
-    }
-    case "SendMessageBatch": {
-      return {
-        action: "SendMessageBatch",
-        request: payload as SendMessageBatchRequest,
-      };
-    }
-    case "PurgeQueue": {
-      return {
-        action: "PurgeQueue",
-        request: payload as PurgeQueueRequest,
-      };
-    }
-    default: {
-      throw new Error("unknown action", {
-        cause: {
-          action,
-        },
-      });
-    }
-  }
-};
-
-const parseReq_json = async <T>(c: Context): Promise<SdkAction> => {
-  const obj = await c.req.json();
-  const target = c.req.header("x-amz-target");
-  switch (target) {
-    case "AmazonSQS.SendMessage":
-      return { action: "SendMessage", request: obj };
-    case "AmazonSQS.SendMessageBatch":
-      return { action: "SendMessageBatch", request: obj };
-    case "AmazonSQS.PurgeQueue":
-      return { action: "PurgeQueue", request: obj };
-    default: {
-      throw new Error("unknown target", {
-        cause: {
-          target,
-        },
-      });
-    }
-  }
-};
 
 export const extractQueueName = (queueUrl: string | undefined) => {
   const parsed = new URL(queueUrl ?? "");
