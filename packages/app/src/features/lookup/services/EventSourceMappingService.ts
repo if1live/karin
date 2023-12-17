@@ -80,6 +80,15 @@ export const EventSourceMappingService = {
     return found;
   },
 
+  async findByUUID(uuid: string) {
+    const found = await db
+      .selectFrom(table)
+      .selectAll()
+      .where("uuid", "=", uuid)
+      .executeTakeFirst();
+    return found;
+  },
+
   async deleteByFunctionArn(arn: string) {
     await db.deleteFrom(table).where("functionArn", "=", arn).execute();
   },

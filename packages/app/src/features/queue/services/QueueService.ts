@@ -1,5 +1,5 @@
 import { ChainableCommander, Redis } from "ioredis";
-import { Message } from "../types.js";
+import { MyMessage, MyMessageHeader } from "../types.js";
 
 const createQueueKey = (queueName: string) => `karin:queue:${queueName}`;
 const createMessageKey = (id: string) => `karin:message:${id}`;
@@ -7,7 +7,7 @@ const createMessageKey = (id: string) => `karin:message:${id}`;
 const ttl_message = 14 * 24 * 3600;
 
 interface EnqueueInput {
-  message: Message;
+  message: MyMessage;
   delaySeconds: number;
 }
 
@@ -31,7 +31,15 @@ export class QueueService {
   ) {
     const { message, delaySeconds } = input;
     const ts_active = now.getTime() + delaySeconds * 1000;
-    const text = JSON.stringify(message);
+
+    const header: MyMessageHeader = {
+      ts_sent: now.getTime(),
+    };
+    const payload = {
+      ...message,
+      ...header,
+    };
+    const text = JSON.stringify(payload);
 
     const { id } = message;
     const messageKey = createMessageKey(id);
@@ -60,6 +68,10 @@ export class QueueService {
       return [];
     }
 
+    if (ids.length <= 0) {
+      return [];
+    }
+
     return await this.mget(ids);
   }
 
@@ -70,13 +82,23 @@ export class QueueService {
 
   async mget(ids: string[]) {
     const keys = ids.map((id) => createMessageKey(id));
+    if (keys.length <= 0) {
+      return [];
+    }
+
     const founds = await this.redis.mget(keys);
 
     const results = [];
     for (let i = 0; i < ids.length; i++) {
       const text = founds[i] ?? null;
-      const message = text ? Message.parse(JSON.parse(text)) : null;
-      results.push(message);
+      if (text === null) {
+        results.push(null);
+      } else {
+        const obj = JSON.parse(text);
+        const message = MyMessage.parse(obj);
+        const header = MyMessageHeader.parse(obj);
+        results.push({ message, header });
+      }
     }
 
     return results;
@@ -87,6 +109,14 @@ export class QueueService {
     const pipeline = this.redis.pipeline();
     pipeline.zrem(this.queueKey, id);
     pipeline.del(messageKey);
+    await pipeline.exec();
+  }
+
+  async mdel(ids: string[]) {
+    const keys = ids.map((id) => createMessageKey(id));
+    const pipeline = this.redis.pipeline();
+    pipeline.zrem(this.queueKey, ...ids);
+    pipeline.del(...keys);
     await pipeline.exec();
   }
 

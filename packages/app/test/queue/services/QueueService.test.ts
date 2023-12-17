@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { faker } from "@faker-js/faker";
 import { QueueService } from "../../../src/features/queue/services/QueueService.js";
-import { Message } from "../../../src/features/queue/types.js";
+import { MyMessage } from "../../../src/features/queue/types.js";
 import { TestRedis } from "../../framework.js";
 
 describe("QueueService", () => {
@@ -10,15 +10,15 @@ describe("QueueService", () => {
   const queueName = faker.string.alphanumeric(10);
   const s = new QueueService(redis, queueName);
 
-  const message_a: Message = {
+  const message_a: MyMessage = {
     body: "a",
     id: faker.string.uuid(),
   };
-  const message_b: Message = {
+  const message_b: MyMessage = {
     body: "b",
     id: faker.string.uuid(),
   };
-  const message_c: Message = {
+  const message_c: MyMessage = {
     body: "c",
     id: faker.string.uuid(),
   };
@@ -39,7 +39,7 @@ describe("QueueService", () => {
     assert.equal(founds.length, 1);
 
     const first = founds[0];
-    assert.deepEqual(first, message_a);
+    assert.deepEqual(first?.message, message_a);
   });
 
   it("peek: message > count", async () => {
@@ -47,7 +47,7 @@ describe("QueueService", () => {
     assert.equal(founds.length, 1);
 
     const first = founds[0];
-    assert.deepEqual(first, message_a);
+    assert.deepEqual(first?.message, message_a);
   });
 
   it("peek: message < count", async () => {
@@ -55,8 +55,8 @@ describe("QueueService", () => {
     assert.equal(founds.length, 2);
 
     const [first, second] = founds;
-    assert.deepEqual(first, message_a);
-    assert.deepEqual(second, message_b);
+    assert.deepEqual(first?.message, message_a);
+    assert.deepEqual(second?.message, message_b);
   });
 
   it("delete", async () => {
@@ -69,7 +69,7 @@ describe("QueueService", () => {
 
   it("get: found", async () => {
     const data = await s.get(message_a.id);
-    assert.deepEqual(data, message_a);
+    assert.deepEqual(data?.message, message_a);
   });
 
   it("get: not found", async () => {

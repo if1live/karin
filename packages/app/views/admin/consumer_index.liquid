@@ -7,9 +7,7 @@
   <table class="ui selectable table">
     <thead>
       <tr>
-        <th>event source</th>
-        <th>function</th>
-        <th>action</th>
+        <th>mapping</th>
         <th>etc</th>
       </tr>
     </thead>
@@ -20,26 +18,40 @@
             <dl>
               <dt>sqs</dt>
               <dd>{{ entry.display_eventSourceArn }}</dd>
-              <dt>batch size</dt>
-              <dd>{{ entry.batchSize }}</dd>
+              <dt>lambda</dt>
+              <dd>{{ entry.display_functionArn }}</dd>
             </dl>
-          </td>
-          <td>{{ entry.display_functionArn }}</td>
-          <td>
-            <p>
-              <button class="ui mini primary button">start</button>
-              <br/>
-              <button class="ui mini secondary button">stop</button>
-              <br/>
-              <button class="ui mini negative button">flush</button>
-            </p>
-          </td>
-          <td>
+
             <details>
               <summary>details</summary>
 <pre>{{ entry | json: 2}}</pre>
             </details>
           </td>
+          <td>
+            <div class="ui mini buttons">
+
+              <button class="ui primary button">start</button>
+
+              <div class="or"></div>
+
+              <button class="ui secondary button">stop</button>
+
+              <div class="or"></div>
+
+              <form method="post" action="/admin/consumer/consume">
+                <input
+                  type="hidden"
+                  name="uuid"
+                  value="{{ entry.uuid }}">
+                <button class="ui button" type="submit">consume</button>
+              </form>
+
+              <div class="or"></div>
+
+              <button class="ui negative button">flush</button>
+            </div>
+          </td>
+          <td></td>
         </tr>
       {% endfor %}
     </tbody>

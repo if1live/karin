@@ -5,6 +5,7 @@ import { compress } from "hono/compress";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { consumerAdmin } from "./features/consumer/index.js";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
 import {
   queueAdmin,
@@ -52,7 +53,7 @@ app.notFound(async (c) => {
 app.use("*", logger());
 app.get("*", prettyJSON());
 
-if (settings.NODE_ENV) {
+if (settings.NODE_ENV === "development") {
   app.use("*", livereloadMiddleware());
 }
 
@@ -61,7 +62,9 @@ const myauth = basicAuth({
   username: settings.ADMIN_ID,
   password: settings.ADMIN_PW,
 });
-app.use("/admin/*", myauth);
+if (settings.NODE_ENV !== "development") {
+  app.use("/admin/*", myauth);
+}
 
 // TODO: hono/node-server 구현에 버그가 있어서 compress 미들웨어 있으면 c.html이 plain text로 응답한다.
 // https://github.com/honojs/node-server/issues/104
@@ -111,3 +114,4 @@ app.route(`${prefix_site}${upstashController.resource}`, upstashController.app);
 app.route(`${prefix_admin}${sysAdmin.resource}`, sysAdmin.app);
 app.route(`${prefix_admin}${lookupAdmin.resource}`, lookupAdmin.app);
 app.route(`${prefix_admin}${queueAdmin.resource}`, queueAdmin.app);
+app.route(`${prefix_admin}${consumerAdmin.resource}`, consumerAdmin.app);

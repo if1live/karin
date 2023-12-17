@@ -14,7 +14,7 @@ import {
 import { Context, Hono } from "hono";
 import { redis } from "../../instances/index.js";
 import { QueueService } from "./services/QueueService.js";
-import { Message } from "./types.js";
+import { MyMessage } from "./types.js";
 
 export const resource = "/queue/" as const;
 export const app = new Hono();
@@ -132,7 +132,7 @@ const fn_sendMessage = async (c: Context) => {
 
   const messageId = crypto.randomUUID();
   const body = req.MessageBody ?? "";
-  const message: Message = {
+  const message: MyMessage = {
     id: messageId,
     body,
   };

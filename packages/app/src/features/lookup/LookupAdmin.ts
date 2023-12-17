@@ -1,7 +1,11 @@
-import { parse } from "@aws-sdk/util-arn-parser";
 import { Hono } from "hono";
 import { z } from "zod";
 import { MyResponse } from "../../system/index.js";
+import {
+  EventSourceMappingModel,
+  FunctionDefinitionModel,
+  FunctionUrlModel,
+} from "./models.js";
 import { EventSourceMappingService } from "./services/EventSourceMappingService.js";
 import { FunctionDefinitionService } from "./services/FunctionDefinitionService.js";
 import { FunctionUrlService } from "./services/FunctionUrlService.js";
@@ -25,35 +29,15 @@ type FunctionArnInput = z.infer<typeof FunctionArnInput>;
 app.get("", async (c) => {
   const list_naive = await LookupService.load();
   const list = list_naive.map((entry) => {
-    const fn_definition = (prev: NonNullable<(typeof entry)["definition"]>) => {
-      const parsed = parse(prev.functionArn);
-      return {
-        display_functionArn: parsed.resource,
-        ...prev,
-      };
-    };
-
-    const fn_url = (prev: NonNullable<(typeof entry)["url"]>) => {
-      const parsed = parse(prev.functionArn);
-      return {
-        display_functionArn: parsed.resource,
-        ...prev,
-      };
-    };
-
-    const fn_mapping = (prev: NonNullable<(typeof entry)["mapping"]>) => {
-      return {
-        display_functionArn: parse(prev.functionArn).resource,
-        display_eventSourceArn: parse(prev.eventSourceArn).resource,
-        ...prev,
-      };
-    };
-
     const definition = entry.definition
-      ? fn_definition(entry.definition)
+      ? FunctionDefinitionModel.create(entry.definition)
       : null;
-    const url = entry.url ? fn_url(entry.url) : null;
-    const mapping = entry.mapping ? fn_mapping(entry.mapping) : null;
+
+    const url = entry.url ? FunctionUrlModel.create(entry.url) : null;
+
+    const mapping = entry.mapping
+      ? EventSourceMappingModel.create(entry.mapping)
+      : null;
 
     return {
       definition,

@@ -1,8 +1,8 @@
-import { parse } from "@aws-sdk/util-arn-parser";
 import { Hono } from "hono";
 import * as z from "zod";
 import { redis } from "../../instances/index.js";
 import { MyRequest, MyResponse } from "../../system/index.js";
+import { EventSourceMappingModel } from "../lookup/models.js";
 import { EventSourceMappingService } from "../lookup/services/EventSourceMappingService.js";
 import { QueueService } from "./services/QueueService.js";
 
@@ -19,15 +19,7 @@ type QueueNameInput = z.infer<typeof QueueNameInput>;
 export class QueueAdmin {
   async index(req: MyRequest): Promise<MyResponse> {
     const founds = await EventSourceMappingService.list();
-    const entries = founds.map((x) => {
-      const display_eventSourceArn = parse(x.eventSourceArn).resource;
-      const display_functionArn = parse(x.functionArn).resource;
-      return {
-        ...x,
-        display_eventSourceArn,
-        display_functionArn,
-      };
-    });
+    const entries = founds.map((x) => EventSourceMappingModel.create(x));
 
     const payload = {
       entries,
