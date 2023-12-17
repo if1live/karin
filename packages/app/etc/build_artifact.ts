@@ -24,7 +24,7 @@ const opts_common: esbuild.BuildOptions = {
   sourcemap: true,
   treeShaking: true,
   platform: "node",
-  external: ["better-sqlite3"],
+  external: ["better-sqlite3", "ioredis-mock"],
   target: "node20",
   format: "esm",
   mainFields: ["module", "main"],

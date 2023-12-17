@@ -33,10 +33,9 @@ export const EventSourceMappingService = {
       .where("uuid", "=", uuid)
       .executeTakeFirst();
 
-    const functionResponseType: FunctionResponseType | null =
-      input.FunctionResponseTypes
-        ? input.FunctionResponseTypes[0] ?? null
-        : null;
+    const functionResponseType = input.FunctionResponseTypes
+      ? input.FunctionResponseTypes[0] ?? null
+      : null;
 
     const data = {
       eventSourceArn: input.EventSourceArn ?? "",

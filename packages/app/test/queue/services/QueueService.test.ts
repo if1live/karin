@@ -3,10 +3,10 @@ import { describe, it } from "node:test";
 import { faker } from "@faker-js/faker";
 import { QueueService } from "../../../src/features/queue/services/QueueService.js";
 import { MyMessage } from "../../../src/features/queue/types.js";
-import { TestRedis } from "../../framework.js";
+import { createRedis_mock } from "../../../src/instances/redis.js";
 
-describe("QueueService", () => {
-  const redis = TestRedis.create();
+describe("QueueService", async () => {
+  const redis = await createRedis_mock();
   const queueName = faker.string.alphanumeric(10);
   const s = new QueueService(redis, queueName);
 
