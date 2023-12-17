@@ -1,7 +1,11 @@
 import { serve } from "@hono/node-server";
 import * as Sentry from "@sentry/node";
 import { app } from "./app.js";
+import { executor } from "./features/consumer/ConsumerExecutor.js";
+import { EventSourceMappingModel } from "./features/lookup/models.js";
+import { db } from "./instances/rdbms.js";
 import * as settings from "./settings.js";
+import { tableName_EventSourceMapping } from "./tables/types.js";
 
 if (settings.SENTRY_DSN) {
   Sentry.init({
@@ -22,6 +26,22 @@ async function main_livereload() {
 
 if (settings.NODE_ENV === "development") {
   await main_livereload();
+}
+
+// executor
+executor.main().then(
+  () => {},
+  () => {},
+);
+
+// 서버 재시작되면 db를 기본값으로 쓴다
+const founds = await db
+  .selectFrom(tableName_EventSourceMapping)
+  .selectAll()
+  .execute();
+for (const found of founds) {
+  const model = EventSourceMappingModel.create(found);
+  executor.add(model);
 }
 
 const port = 4000;

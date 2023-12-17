@@ -1,4 +1,5 @@
 import { ChainableCommander, Redis } from "ioredis";
+import * as R from "remeda";
 import { MyMessage, MyMessageHeader } from "../types.js";
 
 const createQueueKey = (queueName: string) => `karin:queue:${queueName}`;
@@ -72,7 +73,10 @@ export class QueueService {
       return [];
     }
 
-    return await this.mget(ids);
+    // mget은 redis mget을 베낀거라서 null이 포함된다.
+    // peek에서는 null을 숨기고 싶어서 떔질
+    const founds = await this.mget(ids);
+    return founds.filter(R.isNonNull);
   }
 
   async get(id: string) {

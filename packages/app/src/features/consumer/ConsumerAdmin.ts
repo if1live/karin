@@ -1,4 +1,3 @@
-import { parse } from "@aws-sdk/util-arn-parser";
 import { Hono } from "hono";
 import * as R from "remeda";
 import * as z from "zod";
@@ -7,6 +6,7 @@ import { MyResponse } from "../../system/index.js";
 import { EventSourceMappingModel } from "../lookup/models.js";
 import { EventSourceMappingService } from "../lookup/services/EventSourceMappingService.js";
 import { QueueService } from "../queue/services/QueueService.js";
+import { executor } from "./ConsumerExecutor.js";
 import { InvokeService } from "./InvokeService.js";
 
 export const resource = "/consumer" as const;
@@ -15,9 +15,15 @@ export const app = new Hono();
 const indexLocation = `/admin${resource}`;
 
 app.get("", async (c) => {
-  // TODO: 중복 코드 제거?
+  const actors = executor.inspect();
+
   const founds = await EventSourceMappingService.list();
-  const entries = founds.map((x) => EventSourceMappingModel.create(x));
+  const entries = founds
+    .map((x) => EventSourceMappingModel.create(x))
+    .map((x) => {
+      const actor = actors.find((y) => y.uuid === x.uuid);
+      return { ...x, actor };
+    });
 
   const payload = {
     entries,
@@ -58,16 +64,37 @@ app.post("/consume", async (c) => {
     return c.json({ message: "no records" });
   }
 
-  // TODO: null 처리? null은 service 수준에서 리턴 안하는게 낫나?
-  const records_valid = records.filter(R.isNonNull);
-  await queueService.mdel(records_valid.map((x) => x.message.id));
-
   const invokeService = new InvokeService(
     lambdaClient,
     queueName,
     functionName,
   );
-  const result = await invokeService.invoke(records_valid);
+  const result = await invokeService.invoke(records);
 
   return c.json(result as any);
+});
+
+app.post("/start", async (c) => {
+  const body = await c.req.parseBody();
+  const input = ConsumeReq.parse(body);
+  const { uuid } = input;
+
+  // TODO: 중복 제거
+  const found = await EventSourceMappingService.findByUUID(uuid);
+  if (!found) throw new Error("event source mapping not found");
+
+  const mapping = EventSourceMappingModel.create(found);
+  executor.add(mapping);
+
+  return c.redirect(indexLocation);
+});
+
+app.post("/stop", async (c) => {
+  const body = await c.req.parseBody();
+  const input = ConsumeReq.parse(body);
+  const { uuid } = input;
+
+  executor.remove(uuid);
+
+  return c.redirect(indexLocation);
 });

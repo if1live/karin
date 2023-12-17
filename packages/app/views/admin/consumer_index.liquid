@@ -3,19 +3,22 @@
 {% block content %}
   <h1>consumer</h1>
 
-  <h2>event source mappings</h2>
   <table class="ui selectable table">
     <thead>
       <tr>
         <th>mapping</th>
-        <th>etc</th>
+        <th>state</th>
+        <th>action</th>
       </tr>
     </thead>
     <tbody>
       {% for entry in entries %}
+        {% assign actor = entry.actor %}
         <tr>
           <td>
             <dl>
+              <dt>uuid</dt>
+              <dd>{{ entry.uuid }}</dd>
               <dt>sqs</dt>
               <dd>{{ entry.display_eventSourceArn }}</dd>
               <dt>lambda</dt>
@@ -27,29 +30,50 @@
 <pre>{{ entry | json: 2}}</pre>
             </details>
           </td>
+
           <td>
-            <div class="ui mini buttons">
+            {% if actor %}
+              <dl>
+                <dt>tick</dt>
+                <dd>{{ actor.tick }}</dd>
+              </dl>
+            {% else %}
+              NO_ACTOR
+            {% endif %}
+          </td>
 
-              <button class="ui primary button">start</button>
+          <td>
+            <form method="post" class="ui mini buttons">
+              <input
+                type="hidden"
+                name="uuid"
+                value="{{ entry.uuid }}">
+
+              <button
+                class="ui primary button"
+                type="submit"
+                formaction="/admin/consumer/start">
+                start
+              </button>
 
               <div class="or"></div>
 
-              <button class="ui secondary button">stop</button>
+              <button
+                class="ui secondary button"
+                type="submit"
+                formaction="/admin/consumer/stop">
+                stop
+              </button>
 
               <div class="or"></div>
 
-              <form method="post" action="/admin/consumer/consume">
-                <input
-                  type="hidden"
-                  name="uuid"
-                  value="{{ entry.uuid }}">
-                <button class="ui button" type="submit">consume</button>
-              </form>
-
-              <div class="or"></div>
-
-              <button class="ui negative button">flush</button>
-            </div>
+              <button
+                class="ui button"
+                type="submit"
+                formaction="/admin/consumer/consume">
+                consume
+              </button>
+            </form>
           </td>
           <td></td>
         </tr>
