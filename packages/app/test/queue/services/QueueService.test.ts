@@ -12,23 +12,23 @@ describe("QueueService", () => {
 
   const message_a: Message = {
     body: "a",
-    messageId: faker.string.uuid(),
+    id: faker.string.uuid(),
   };
   const message_b: Message = {
     body: "b",
-    messageId: faker.string.uuid(),
+    id: faker.string.uuid(),
   };
   const message_c: Message = {
     body: "c",
-    messageId: faker.string.uuid(),
+    id: faker.string.uuid(),
   };
 
   const now = new Date();
 
   it("enqueue", async () => {
-    await s.enqueue(message_b, { delaySeconds: 1, now });
-    await s.enqueue(message_c, { delaySeconds: 2, now });
-    await s.enqueue(message_a, { delaySeconds: 0, now });
+    await s.enqueueAsync({ message: message_b, delaySeconds: 1 }, now);
+    await s.enqueueAsync({ message: message_c, delaySeconds: 2 }, now);
+    await s.enqueueAsync({ message: message_a, delaySeconds: 0 }, now);
 
     const result = await s.inspect();
     assert.equal(result.len, 3);
@@ -60,7 +60,7 @@ describe("QueueService", () => {
   });
 
   it("delete", async () => {
-    const x = await s.del(message_b.messageId);
+    const x = await s.del(message_b.id);
     console.log(x);
 
     const result = await s.inspect();
@@ -68,12 +68,12 @@ describe("QueueService", () => {
   });
 
   it("get: found", async () => {
-    const data = await s.get(message_a.messageId);
+    const data = await s.get(message_a.id);
     assert.deepEqual(data, message_a);
   });
 
   it("get: not found", async () => {
-    const data = await s.get(message_b.messageId);
+    const data = await s.get(message_b.id);
     assert.equal(data, null);
   });
 

@@ -1,10 +1,15 @@
-import { Redis } from "ioredis";
+import { ChainableCommander, Redis } from "ioredis";
 import { Message } from "../types.js";
 
 const createQueueKey = (queueName: string) => `karin:queue:${queueName}`;
 const createMessageKey = (id: string) => `karin:message:${id}`;
 
 const ttl_message = 14 * 24 * 3600;
+
+interface EnqueueInput {
+  message: Message;
+  delaySeconds: number;
+}
 
 export class QueueService {
   public readonly queueKey: string;
@@ -13,24 +18,26 @@ export class QueueService {
     this.queueKey = createQueueKey(queueName);
   }
 
-  async enqueue(
-    message: Message,
-    params: {
-      delaySeconds: number;
-      now: Date;
-    },
+  async enqueueAsync(input: EnqueueInput, now: Date) {
+    const pipeline = this.redis.pipeline();
+    this.enqueuePipeline(pipeline, input, now);
+    await pipeline.exec();
+  }
+
+  enqueuePipeline(
+    pipeline: ChainableCommander,
+    input: EnqueueInput,
+    now: Date,
   ) {
-    const { delaySeconds, now } = params;
+    const { message, delaySeconds } = input;
     const ts_active = now.getTime() + delaySeconds * 1000;
     const text = JSON.stringify(message);
 
-    const { messageId } = message;
-    const messageKey = createMessageKey(messageId);
+    const { id } = message;
+    const messageKey = createMessageKey(id);
 
-    const pipeline = this.redis.pipeline();
-    pipeline.zadd(this.queueKey, ts_active, messageId);
+    pipeline.zadd(this.queueKey, ts_active, id);
     pipeline.setex(messageKey, ttl_message, text);
-    await pipeline.exec();
   }
 
   /**
