@@ -16,8 +16,10 @@
 </head>
 <body>
   <section class="ui text container">
-    <h1>karin</h1>
-    <img class="ui image" src="https://raw.githubusercontent.com/if1live/karin/main/documents/images/icon.png?token=GHSAT0AAAAAACJOMIXH2D4SUIJGSBUQTMBKZL64AIQ" />
+    <h1>
+      <a href="https://github.com/if1live/karin">karin</a>
+    </h1>
+    <img class="ui image" src="https://raw.githubusercontent.com/if1live/karin/main/documents/images/icon.png" />
 
     <h2>websocket example</h2>
 
@@ -37,24 +39,63 @@
       </button>
     </div>
 
-    <h3>unicast</h3>
     <form class="ui form">
       <div class="field">
-        <textarea id="textarea-unicast" rows="2"></textarea>
+        <label>message</label>
+        <input
+          type="text"
+          id="textarea-unicast"
+          value="kakudate karin" />
       </div>
 
-      <button
-        class="ui button mini"
-        id="button-unicast"
-        type="button">
-        unicast
-      </button>
+      <div class="field">
+        <label>delay seconds</label>
+        <input
+          type="number"
+          id="input-delay"
+          min="0"
+          max="900"
+          value="5" />
+      </div>
     </form>
+
+    <p>
+      <h3>simple</h3>
+      <div class="ui mini buttons">
+        <button
+          class="ui button"
+          id="button-unicast"
+          type="button">
+          unicast
+        </button>
+      </div>
+    </p>
+
+    <p>
+      <h3>SQS: SendMessage</h3>
+      <div class="ui mini buttons">
+        <button
+          class="ui button"
+          id="button-karin-send-message"
+          type="button">
+          karin
+        </button>
+        <div class="or"></div>
+        <button
+          class="ui button"
+          id="button-elasticmq-send-message"
+          type="button">
+          elasticmq
+        </button>
+      </div>
+    </p>
 
     <h2>messages</h2>
     <ol id="messages">
       <li>initial</li>
     </ol>
+
+    <p style="height: 20em;"></p>
   </section>
 
   <script>
@@ -136,5 +177,32 @@
       ws.send(text);
       appendMessage('send', text);
     });
+
+    document.querySelector('#button-karin-send-message').addEventListener('click', async (evt) => {
+      handleSendMessage('karin');
+    });
+
+    document.querySelector('#button-elasticmq-send-message').addEventListener('click', async (evt) => {
+      handleSendMessage('elasticmq');
+    });
+
+    async function handleSendMessage(target) {
+      if (! ws) {
+        return;
+      }
+
+      const message = document.querySelector('#textarea-unicast').value || '<BLANK>'
+      const delay = document.querySelector('#input-delay').valueAsNumber;
+
+      try {
+        const url = `/${target}/send?message=${message}&delay=${delay}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+        });
+        appendMessage(`sqs:${target}`, `send: ${message}, delay=${delay}`);
+      } catch(e) {
+        appendMessage(`sqs:${target}`, `send: failed`);
+      }
+    }
   </script>
 </body>
