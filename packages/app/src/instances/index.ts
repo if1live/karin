@@ -5,12 +5,16 @@ import * as settings from "../settings.js";
 export * from "./rdbms.js";
 export * from "./aws.js";
 
-// fly.io upstash redis 쓰러면 family 6 필수
-export const redis = new Redis(settings.REDIS_URL, {
-  lazyConnect: true,
-  family: 6,
-});
-await redis.connect();
+const createRedis_real = (): Redis => {
+  // fly.io upstash redis 쓰러면 family 6 필수
+  const redis = new Redis(settings.REDIS_URL, {
+    lazyConnect: true,
+    family: 6,
+  });
+  return redis;
+};
+
+export const redis = createRedis_real();
 
 export const engine = new Liquid({
   root: settings.viewPath,
