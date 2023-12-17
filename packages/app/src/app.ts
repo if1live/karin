@@ -78,8 +78,7 @@ app.get("/", async (c) => c.redirect(`${prefix_site}/`));
 // 공개 최상위
 app.get(`${prefix_site}`, async (c) => c.redirect(`${prefix_site}/`));
 app.get(`${prefix_site}/`, async (c) => {
-  // TODO: 하나면 심심해서 넣은건데
-  const filenames = ["title_01.jpg", "title_02.jpg"];
+  const filenames = ["title_02.jpg"];
   const ts = Date.now();
   const filename = filenames[ts % filenames.length];
   const fp = `/static/images/${filename}`;
