@@ -9,7 +9,13 @@ await redis.connect();
 
 export const sqsEndpoint_elasticmq = "http://127.0.0.1:9324";
 
-export const sqsEndpoint_karin = "http://127.0.0.1:4000/api/queue";
+const sqsEndpoint_karin_localhost = "http://127.0.0.1:4000/api/queue";
+const sqsEndpoint_karin_remote = "https://karin.fly.dev/api/queue";
+
+export const sqsEndpoint_karin =
+  settings.NODE_ENV === "production"
+    ? sqsEndpoint_karin_remote
+    : sqsEndpoint_karin_localhost;
 
 export const createSqsClient_prod = () => {
   return new SQSClient({
