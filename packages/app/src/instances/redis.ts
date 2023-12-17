@@ -5,7 +5,7 @@ export const createRedis_real = async (): Promise<Redis> => {
   // fly.io upstash redis 쓰러면 family 6 필수
   const redis = new Redis(settings.REDIS_URL, {
     lazyConnect: true,
-    family: 6,
+    // family: 6,
   });
   await redis.connect();
   return redis;
