@@ -1,5 +1,6 @@
 import { SQSClient } from "@aws-sdk/client-sqs";
 import { Redis } from "ioredis";
+import { Liquid } from "liquidjs";
 import * as settings from "./settings.js";
 
 export const redis = new Redis(settings.REDIS_URL, {
@@ -38,3 +39,9 @@ export const createQueueUrl_prod = (queue: string) => {
   const endpoint = `https://sqs.${settings.AWS_REGION}.amazonaws.com`;
   return `${endpoint}/${settings.AWS_ACCOUNT_ID}/${queue}`;
 };
+
+export const engine = new Liquid({
+  root: settings.viewPath,
+  extname: ".liquid",
+  cache: settings.NODE_ENV === "production",
+});

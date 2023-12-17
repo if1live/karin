@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>karin example</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css"
+    integrity="sha512-KXol4x3sVoO+8ZsWPFI/r5KBVB/ssCGB5tsv2nVOKwLg33wTFP3fmnXa47FdSVIshVTgsYk/1734xSk9aFIa4A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer" />
+
+</head>
+<body>
+  <section class="ui text container">
+    <h1>karin example</h1>
+
+    <dl>
+      <dt>url</dt>
+      <dd>{{ websocketUrl }}</dd>
+    </dl>
+
+    <h2>actions</h2>
+    <div class="ui buttons mini">
+      <button class="ui button" id="button-connect">
+        connect
+      </button>
+      <div class="or"></div>
+      <button class="ui button" id="button-disconnect">
+        disconnect
+      </button>
+    </div>
+
+    <h3>unicast</h3>
+    <form class="ui form">
+      <div class="field">
+        <textarea id="textarea-unicast" rows="2"></textarea>
+      </div>
+
+      <button
+        class="ui button mini"
+        id="button-unicast"
+        type="button">
+        unicast
+      </button>
+    </form>
+
+    <h2>messages</h2>
+    <ol id="messages">
+      <li>initial</li>
+    </ol>
+  </section>
+
+  <script>
+    const websocketUrl = "{{ websocketUrl }}";
+
+    /** @type {WebSocket} */
+    let ws = null;
+
+    function appendMessage(eventType, line) {
+      const now = new Date();
+      const ts = now.toISOString();
+
+      const elem = document.createElement('li');
+      elem.innerText = `${ts} [${eventType}] ${line}`;
+
+      const container = document.querySelector('#messages');
+      container.append(elem);
+    }
+
+    function flushMessage() {
+      const container = document.querySelector('#messages');
+      container.innerHTML = "";
+    }
+
+    document.querySelector('#button-connect').addEventListener('click', function(evt) {
+      if (ws) {
+        return;
+      }
+
+      flushMessage();
+
+      const url = `${websocketUrl}?token=hello`;
+      ws = new WebSocket(url);
+      ws.binaryType = 'arraybuffer';
+
+      ws.onmessage = async function(evt) {
+        const data = evt.data;
+        if (typeof data === 'string') {
+          appendMessage('recv: text', data);
+        } else {
+          const message = new TextDecoder().decode(data);
+          appendMessage('recv: binary', message);
+        }
+      };
+
+      ws.onerror = function(evt) {
+        console.log('onerror', evt);
+        appendMessage('error', JSON.stringify(evt));
+      };
+
+      ws.onopen = function(evt) {
+        appendMessage('open', '');
+      };
+
+      ws.onclose = function(evt) {
+        const {code, reason, wasClean} = evt;
+        const line = `code=${code} / reason=${reason} / wasClean=${wasClean}`;
+        appendMessage('close', line);
+      };
+    });
+
+    document.querySelector('#button-disconnect').addEventListener('click', function(evt) {
+      if (! ws) {
+        return;
+      }
+
+      ws.close();
+      ws = null;
+    });
+
+    document.querySelector('#button-unicast').addEventListener('click', function(evt) {
+      if (! ws) {
+        return;
+      }
+
+      const container = document.querySelector('#textarea-unicast');
+      const text = container.value;
+
+      ws.send(text);
+      appendMessage('send', text);
+    });
+  </script>
+</body>

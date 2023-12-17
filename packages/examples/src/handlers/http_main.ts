@@ -11,6 +11,7 @@ import {
   createQueueUrl_dev,
   createQueueUrl_prod,
   createSqsClient_dev,
+  engine,
   redis,
   sqsEndpoint_elasticmq,
   sqsEndpoint_karin,
@@ -65,9 +66,16 @@ export const dispatch: APIGatewayProxyHandlerV2 = async (event, context) => {
   };
 
   if (check("GET", "/")) {
+    const websocketUrl = settings.WEBSOCKET_URL;
+    const text = await engine.renderFile("index", {
+      websocketUrl,
+    });
     return {
       statusCode: 200,
-      body: "karin-example",
+      body: text,
+      headers: {
+        "Content-Type": "text/html",
+      },
     };
   }
 

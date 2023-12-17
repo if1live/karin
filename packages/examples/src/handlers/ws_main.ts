@@ -89,7 +89,7 @@ function deriveEndpoint(
 
   // APIGatewayProxyWebsocketEventV2로는 포트 정보까지 얻을 수 없다.
   // 로컬이라고 가정되면 좌표가 뻔해서 편법을 써도 된다
-  const endpoint_private = "ws://127.0.0.1:3001";
+  const endpoint_private = settings.WEBSOCKET_URL.replace("ws://", "http://");
 
   return apiId === "private" ? endpoint_private : endpoint_prod;
 }
