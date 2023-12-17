@@ -20,3 +20,5 @@ export const viewPath = path.join(rootPath, "views");
 
 export const ADMIN_ID = process.env.ADMIN_ID || "admin";
 export const ADMIN_PW = process.env.ADMIN_PW || "helloworld";
+
+export const SENTRY_DSN = process.env.SENTRY_DSN || "";

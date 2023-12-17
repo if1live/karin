@@ -35,6 +35,8 @@ fly secrets set REDIS_URL=TODO_REDIS_URL
 fly secrets set ADMIN_ID=TODO_ADMIN_ID
 fly secrets set ADMIN_PW=TODO_ADMIN_PW
 
+fly secrets set SENTRY_DSN=TODO_SENTRY_DSN
+
 # (optional) machine은 1개만 쓰기
 fly scale show
 fly scale count 1

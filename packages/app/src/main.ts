@@ -1,6 +1,13 @@
 import { serve } from "@hono/node-server";
+import * as Sentry from "@sentry/node";
 import { app } from "./app.js";
 import * as settings from "./settings.js";
+
+if (settings.SENTRY_DSN) {
+  Sentry.init({
+    dsn: settings.SENTRY_DSN,
+  });
+}
 
 async function main_livereload() {
   const livereload = await import("livereload");
