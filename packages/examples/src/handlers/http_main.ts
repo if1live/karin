@@ -44,14 +44,16 @@ export const dispatch: APIGatewayProxyHandlerV2 = async (event, context) => {
     client: SQSClient,
     queueUrl: string,
   ): Promise<APIGatewayProxyResultV2 | undefined> => {
+    const query = event.queryStringParameters ?? {};
+
     if (check("POST", `${prefix}/send`)) {
-      const req = SendReq.parse(event.queryStringParameters);
+      const req = SendReq.parse(query);
       const output = await fn_sqs_send(req, client, queueUrl);
       return respond_200(output);
     }
 
     if (check("POST", `${prefix}/send-batch`)) {
-      const req = SendReq.parse(event.queryStringParameters);
+      const req = SendReq.parse(query);
       const output = await fn_sqs_sendBatch(req, client, queueUrl);
       return respond_200(output);
     }
