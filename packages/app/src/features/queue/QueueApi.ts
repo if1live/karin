@@ -1,17 +1,16 @@
 import crypto from "node:crypto";
 import {
   BatchResultErrorEntry,
-  PurgeQueueCommandOutput,
   PurgeQueueRequest,
-  SendMessageBatchCommandOutput,
   SendMessageBatchRequest,
   SendMessageBatchResult,
   SendMessageBatchResultEntry,
-  SendMessageCommandOutput,
   SendMessageRequest,
   SendMessageResult,
 } from "@aws-sdk/client-sqs";
+import { MetadataBearer } from "@aws-sdk/types";
 import { Context, Hono } from "hono";
+import XmlJs from "xml-js";
 import { redis } from "../../instances/index.js";
 import { QueueService } from "./services/QueueService.js";
 import { MyMessage } from "./types.js";
@@ -19,19 +18,23 @@ import { MyMessage } from "./types.js";
 export const resource = "/queue/" as const;
 export const app = new Hono();
 
+const contentType_json = "application/x-amz-json-1.0";
+const contentType_urlencoded = "application/x-www-form-urlencoded";
+
+type SdkAction =
+  | { action: "SendMessage"; request: SendMessageRequest }
+  | { action: "SendMessageBatch"; request: SendMessageBatchRequest }
+  | { action: "PurgeQueue"; request: PurgeQueueRequest };
+
+type SdkResult =
+  | { action: "SendMessage"; value: SendMessageResult }
+  | { action: "SendMessageBatch"; value: SendMessageBatchResult }
+  | { action: "PurgeQueue"; value: object };
+
+type ResponseMetadata = MetadataBearer["$metadata"];
+
 // TODO:
 app.post("*", async (c) => {
-  // application/x-amz-json-1.0
-  const contentType = c.req.header("content-type");
-  if (contentType !== "application/x-amz-json-1.0") {
-    throw new Error("not supported content-type", {
-      cause: { contentType },
-    });
-  }
-
-  // AmazonSQS.SendMessage | AmazonSQS.SendMessageBatch
-  const target = c.req.header("x-amz-target");
-
   // c18c5542-d2ad-48b3-b7e1-fd561d1ddfe7
   const sdkInvocationId = c.req.header("amz-sdk-invocation-id");
 
@@ -53,9 +56,9 @@ app.post("*", async (c) => {
   // keep-alive
   const connection = c.req.header("connection");
 
-  const req = {
-    contentType,
-    target,
+  // TODO: aws signature 기반 인증 구현
+
+  const data = {
     sdkInvocationId,
     sdkRequest,
     date,
@@ -63,17 +66,145 @@ app.post("*", async (c) => {
     authorization,
     connection,
   };
-  // console.log(req);
 
-  // TODO: aws signature 기반 인증 구현
+  const req = await parseReq(c);
+  const output = await perform(req);
+  const result: SdkResult = {
+    action: req.action,
+    value: output.result as any,
+  };
+  const metadata: ResponseMetadata = {
+    requestId: crypto.randomUUID(),
+  };
+  return serialize(c, result, metadata);
+});
 
+const serialize = (
+  c: Context,
+  result: SdkResult,
+  metadata: ResponseMetadata,
+) => {
+  const contentType = c.req.header("content-type");
+  switch (contentType) {
+    case contentType_json:
+      return serialize_json(c, result, metadata);
+    case contentType_urlencoded:
+      return serialize_xml(c, result, metadata);
+    default: {
+      throw new Error("not supported content-type", {
+        cause: { contentType },
+      });
+    }
+  }
+};
+
+const serialize_json = (
+  c: Context,
+  result: SdkResult,
+  metadata: ResponseMetadata,
+) => {
+  const resp: SdkResult["value"] & MetadataBearer = {
+    $metadata: metadata,
+    ...result.value,
+  };
+  return c.json(resp as any);
+};
+
+/**
+ * aws-sdk 버전 올라가면 json으로 바뀌는데 람다 런타임은 aws-sdk가 구버전이라서 xml 대응
+ * @link https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-xml-api-responses.html
+ */
+const serialize_xml = (
+  c: Context,
+  result: SdkResult,
+  metadata: ResponseMetadata,
+) => {
+  const responseTagName = `${result.action}Response`;
+  const resultTagName = `${result.action}Result`;
+
+  const entries = Object.entries(result.value).map(([key, value]) => {
+    return [key, { _text: value }];
+  });
+  const content = Object.fromEntries(entries);
+
+  const data = {
+    [responseTagName]: {
+      _attributes: {
+        xmlns: "https://sqs.us-east-2.amazonaws.com/doc/2012-11-05/",
+        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "xsi:type": responseTagName,
+      },
+      [resultTagName]: content,
+      ResponseMetadata: {
+        RequestId: { _text: metadata.requestId },
+      },
+    },
+  };
+
+  // TODO: content-type 야매로 해도 aws-sdk에서 돌더라
+  const xml = XmlJs.js2xml(data, { compact: true, indentText: true });
+  return c.text(xml);
+};
+
+const parseReq = async (c: Context) => {
+  const contentType = c.req.header("content-type");
+  switch (contentType) {
+    case contentType_json:
+      return await parseReq_json(c);
+    case contentType_urlencoded:
+      return await parseReq_urlencoded(c);
+    default: {
+      throw new Error("not supported content-type", {
+        cause: { contentType },
+      });
+    }
+  }
+};
+
+const parseReq_urlencoded = async <T>(c: Context): Promise<SdkAction> => {
+  const body = await c.req.parseBody();
+  const { Action: action, ...rest } = body;
+  const payload = rest as any as SdkAction["request"];
+
+  switch (action) {
+    case "SendMessage": {
+      return {
+        action: "SendMessage",
+        request: payload as SendMessageRequest,
+      };
+    }
+    case "SendMessageBatch": {
+      return {
+        action: "SendMessageBatch",
+        request: payload as SendMessageBatchRequest,
+      };
+    }
+    case "PurgeQueue": {
+      return {
+        action: "PurgeQueue",
+        request: payload as PurgeQueueRequest,
+      };
+    }
+    default: {
+      throw new Error("unknown action", {
+        cause: {
+          action,
+        },
+      });
+    }
+  }
+};
+
+const parseReq_json = async <T>(c: Context): Promise<SdkAction> => {
+  const obj = await c.req.json();
+  const target = c.req.header("x-amz-target");
   switch (target) {
     case "AmazonSQS.SendMessage":
-      return fn_sendMessage(c);
+      return { action: "SendMessage", request: obj };
     case "AmazonSQS.SendMessageBatch":
-      return fn_sendMessageBatch(c);
+      return { action: "SendMessageBatch", request: obj };
     case "AmazonSQS.PurgeQueue":
-      return fn_purgeQueue(c);
+      return { action: "PurgeQueue", request: obj };
     default: {
       throw new Error("unknown target", {
         cause: {
@@ -82,22 +213,6 @@ app.post("*", async (c) => {
       });
     }
   }
-});
-
-const parseReq = async <T>(c: Context) => {
-  // TODO: body parsing
-  const body = c.req.raw.body;
-  const buffer = await body?.getReader().read();
-  const arraybuffer = buffer?.value?.buffer;
-  if (!arraybuffer) {
-    throw new Error("arraybuffer is null");
-  }
-
-  const uint8Array = new Uint8Array(arraybuffer);
-  const decoder = new TextDecoder("utf-8");
-  const decodedString = decoder.decode(uint8Array);
-  const obj = JSON.parse(decodedString);
-  return obj as T;
 };
 
 export const extractQueueName = (queueUrl: string | undefined) => {
@@ -110,23 +225,40 @@ export const extractQueueName = (queueUrl: string | undefined) => {
   return candidate;
 };
 
-const fn_purgeQueue = async (c: Context) => {
-  const req = await parseReq<PurgeQueueRequest>(c);
+const perform = async (req: SdkAction) => {
+  switch (req.action) {
+    case "SendMessage": {
+      const result = await fn_sendMessage(req.request);
+      return { action: req.action, result };
+    }
+    case "SendMessageBatch": {
+      const result = await fn_sendMessageBatch(req.request);
+      return { action: req.action, result };
+    }
+    case "PurgeQueue": {
+      const result = await fn_purgeQueue(req.request);
+      return { action: req.action, result };
+    }
+    default: {
+      throw new Error("unknown action", {
+        cause: { req },
+      });
+    }
+  }
+};
+
+const fn_purgeQueue = async (req: PurgeQueueRequest) => {
   const { QueueUrl: queueUrl } = req;
   const queueName = extractQueueName(queueUrl);
   const s = new QueueService(redis, queueName);
   await s.purge();
 
-  const resp: PurgeQueueCommandOutput = {
-    $metadata: {
-      requestId: crypto.randomUUID(),
-    },
-  };
-  return c.json(resp);
+  return {};
 };
 
-const fn_sendMessage = async (c: Context) => {
-  const req = await parseReq<SendMessageRequest>(c);
+const fn_sendMessage = async (
+  req: SendMessageRequest,
+): Promise<SendMessageResult> => {
   const queueName = extractQueueName(req.QueueUrl);
   const s = new QueueService(redis, queueName);
 
@@ -140,21 +272,15 @@ const fn_sendMessage = async (c: Context) => {
   await s.enqueueAsync({ message, delaySeconds: req.DelaySeconds ?? 0 }, now);
 
   const md5OfMessageBody = crypto.createHash("md5").update(body).digest("hex");
-  const result: SendMessageResult = {
+  return {
     MessageId: messageId,
     MD5OfMessageBody: md5OfMessageBody,
   };
-  const resp: SendMessageCommandOutput = {
-    $metadata: {
-      requestId: crypto.randomUUID(),
-    },
-    ...result,
-  };
-  return c.json(resp);
 };
 
-const fn_sendMessageBatch = async (c: Context) => {
-  const req = await parseReq<SendMessageBatchRequest>(c);
+const fn_sendMessageBatch = async (
+  req: SendMessageBatchRequest,
+): Promise<SendMessageBatchResult> => {
   const queueName = extractQueueName(req.QueueUrl);
   const s = new QueueService(redis, queueName);
 
@@ -192,15 +318,8 @@ const fn_sendMessageBatch = async (c: Context) => {
   }
   await pipeline.exec();
 
-  const result: SendMessageBatchResult = {
+  return {
     Successful: list_successful,
     Failed: list_failed,
   };
-  const resp: SendMessageBatchCommandOutput = {
-    $metadata: {
-      requestId: crypto.randomUUID(),
-    },
-    ...result,
-  };
-  return c.json(resp);
 };
