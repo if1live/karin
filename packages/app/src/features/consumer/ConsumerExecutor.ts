@@ -56,7 +56,7 @@ export class ConsumerExecutor {
         millis = 10;
       }
 
-      console.log(`[executor] sleep: ${millis}ms`);
+      // console.log(`[executor] sleep: ${millis}ms`);
       await setTimeout(millis);
     }
   }
