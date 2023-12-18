@@ -61,7 +61,6 @@ describe("QueueService", async () => {
 
   it("delete", async () => {
     const x = await s.del(message_b.id);
-    console.log(x);
 
     const result = await s.inspect();
     assert.equal(result.len, 2);
