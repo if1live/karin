@@ -22,7 +22,8 @@
     "fix": "biome check --apply-unsafe .",
     "generate": "prisma generate && tsx ./etc/generate_prisma.ts",
     "lint": "biome check .",
-    "test": "globstar -- node --env-file .env.test --import tsx --test \"test/**/*.test.ts\""
+    "test": "vitest",
+    "test:basic": "globstar -- node --env-file .env.test --import tsx --test \"test/**/*.test.ts\""
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "~3.362.0",
@@ -60,7 +61,8 @@
     "prisma-kysely": "^1.7.1",
     "rimraf": "^5.0.5",
     "tsx": "^4.6.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
   },
   "engines": {
     "node": ">=20.0.0"

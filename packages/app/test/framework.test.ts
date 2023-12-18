@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { after, before, describe, it } from "node:test";
+import { afterAll, beforeAll, describe, it } from "vitest";
 import { TestDatabase } from "./framework.js";
 
 describe("TestDatabase", async () => {
   const db = await TestDatabase.prepare();
-  before(async () => TestDatabase.create(db));
-  after(async () => TestDatabase.destroy(db));
+  beforeAll(async () => TestDatabase.create(db));
+  afterAll(async () => TestDatabase.destroy(db));
 
   it("simple", async () => {
     const founds = await db.selectFrom("functionUrl").selectAll().execute();

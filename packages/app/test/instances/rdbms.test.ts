@@ -1,5 +1,4 @@
 import { strict as assert } from "node:assert";
-import { after, before, describe, it, skip } from "node:test";
 import {
   Generated,
   Kysely,
@@ -8,6 +7,7 @@ import {
   SqliteAdapter,
   sql,
 } from "kysely";
+import { afterAll, beforeAll, describe, it } from "vitest";
 import { createKysely, selectDialect } from "../../src/instances/rdbms.js";
 import { Timestamp } from "../../src/tables/index.js";
 
@@ -85,9 +85,9 @@ describe("rdbms", async () => {
     plugins: [new ParseJSONResultsPlugin()],
   });
 
-  before(async () => {});
+  beforeAll(async () => {});
 
-  after(async () => {
+  afterAll(async () => {
     await db.destroy();
   });
 
@@ -99,8 +99,8 @@ describe("rdbms", async () => {
   });
 
   describe("simple", () => {
-    before(async () => User.prepare(db));
-    after(async () => db.schema.dropTable("user").execute());
+    beforeAll(async () => User.prepare(db));
+    afterAll(async () => db.schema.dropTable("user").execute());
 
     it("insert", async () => {
       await db
@@ -126,8 +126,8 @@ describe("rdbms", async () => {
   });
 
   describe("json", () => {
-    before(async () => JsonTable.prepare(db));
-    after(async () => db.schema.dropTable("json").execute());
+    beforeAll(async () => JsonTable.prepare(db));
+    afterAll(async () => db.schema.dropTable("json").execute());
 
     it("insert", async () => {
       const toJson = <T>(obj: T): RawBuilder<T> => sql`${JSON.stringify(obj)}`;
@@ -154,10 +154,8 @@ describe("rdbms", async () => {
   });
 
   describe("datetime", () => {
-    before(async () => {
-      await Article.prepare(db);
-    });
-    after(async () => db.schema.dropTable("article").execute());
+    beforeAll(async () => Article.prepare(db));
+    afterAll(async () => db.schema.dropTable("article").execute());
 
     it("insert + select", async () => {
       await db
