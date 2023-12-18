@@ -10,10 +10,17 @@ import {
 } from "@aws-sdk/client-sqs";
 import { ResponseMetadata } from "@aws-sdk/types";
 import { Context, Hono } from "hono";
+import * as R from "remeda";
 import { redis } from "../../instances/index.js";
 import * as protocols from "./protocols.js";
 import { QueueService } from "./services/QueueService.js";
-import { MyMessage, SdkAction, SdkResult } from "./types.js";
+import {
+  MyMessage,
+  QueueNotification,
+  SdkAction,
+  SdkResult,
+  queueNotifyChannel,
+} from "./types.js";
 
 export const resource = "/queue/" as const;
 export const app = new Hono();
@@ -118,7 +125,14 @@ const fn_sendMessage = async (
     body,
   };
   const now = new Date();
-  await s.enqueueAsync({ message, delaySeconds: req.DelaySeconds ?? 0 }, now);
+  const delaySeconds = req.DelaySeconds ?? 0;
+
+  const pipeline = R.pipe(
+    redis.pipeline(),
+    (p) => s.enqueuePipeline(p, { message, delaySeconds }, now),
+    (p) => s.notifyPipeline(p, 1, delaySeconds, now),
+  );
+  await pipeline.exec();
 
   const md5OfMessageBody = crypto.createHash("md5").update(body).digest("hex");
   return {
@@ -165,6 +179,11 @@ const fn_sendMessageBatch = async (
     };
     list_successful.push(result_successful);
   }
+
+  // Math.min() 쓰면 빈배열에서 함정 밟을거같아서 remeda 쓴다.
+  const delaySeconds_list = entries.map((x) => x.DelaySeconds ?? 0);
+  const delaySeconds = R.minBy(delaySeconds_list, (x) => x) ?? 0;
+  s.notifyPipeline(pipeline, entries.length, delaySeconds, now);
   await pipeline.exec();
 
   return {

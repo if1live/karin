@@ -34,9 +34,18 @@
           <td>
             {% if actor %}
               <dl>
-                <dt>tick</dt>
-                <dd>{{ actor.tick }}</dd>
+                <dt>started at</dt>
+                <dd>{{ actor.startedAt | date: "%Y-%m-%dT%H:%M:%S.%LZ" }}</dd>
+                <dt>executed at</dt>
+                <dd>{{ actor.executedAt | date: "%Y-%m-%dT%H:%M:%S.%LZ" }}</dd>
+                <dt>reserved at</dt>
+                <dd>{{ actor.reservedAt | date: "%Y-%m-%dT%H:%M:%S.%LZ" }}</dd>
               </dl>
+
+              <details>
+                <summary>details</summary>
+<pre>{{ actor | json: 2}}</pre>
+              </details>
             {% else %}
               NO_ACTOR
             {% endif %}

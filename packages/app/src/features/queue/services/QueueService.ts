@@ -1,6 +1,11 @@
 import { ChainableCommander, Redis } from "ioredis";
 import * as R from "remeda";
-import { MyMessage, MyMessageHeader } from "../types.js";
+import {
+  MyMessage,
+  MyMessageHeader,
+  QueueNotification,
+  queueNotifyChannel,
+} from "../types.js";
 
 const createQueueKey = (queueName: string) => `karin:queue:${queueName}`;
 const createMessageKey = (id: string) => `karin:message:${id}`;
@@ -15,7 +20,10 @@ interface EnqueueInput {
 export class QueueService {
   public readonly queueKey: string;
 
-  constructor(private readonly redis: Redis, queueName: string) {
+  constructor(
+    private readonly redis: Redis,
+    private readonly queueName: string,
+  ) {
     this.queueKey = createQueueKey(queueName);
   }
 
@@ -29,7 +37,7 @@ export class QueueService {
     pipeline: ChainableCommander,
     input: EnqueueInput,
     now: Date,
-  ) {
+  ): ChainableCommander {
     const { message, delaySeconds } = input;
     const ts_active = now.getTime() + delaySeconds * 1000;
 
@@ -47,6 +55,8 @@ export class QueueService {
 
     pipeline.zadd(this.queueKey, ts_active, id);
     pipeline.setex(messageKey, ttl_message, text);
+
+    return pipeline;
   }
 
   /**
@@ -131,5 +141,22 @@ export class QueueService {
   async inspect() {
     const len = await this.redis.zcount(this.queueKey, "-inf", "+inf");
     return { len };
+  }
+
+  notifyPipeline(
+    pipeline: ChainableCommander,
+    count: number,
+    delaySeconds: number,
+    now: Date,
+  ): ChainableCommander {
+    const notification: QueueNotification = {
+      queueName: this.queueName,
+      count,
+      sentAt: now,
+      reservedAt: new Date(now.getTime() + delaySeconds * 1000),
+    };
+    const m = JSON.stringify(notification);
+    pipeline.publish(queueNotifyChannel, m);
+    return pipeline;
   }
 }

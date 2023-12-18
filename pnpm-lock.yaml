@@ -35,6 +35,9 @@ importers:
       '@sentry/node':
         specifier: ^7.88.0
         version: 7.88.0
+      debug:
+        specifier: ^4.3.4
+        version: 4.3.4(supports-color@8.1.1)
       hono:
         specifier: ^3.11.8
         version: 3.11.8
@@ -84,6 +87,9 @@ importers:
       '@types/better-sqlite3':
         specifier: ^7.6.8
         version: 7.6.8
+      '@types/debug':
+        specifier: ^4.1.12
+        version: 4.1.12
       '@types/ioredis-mock':
         specifier: ^8.2.5
         version: 8.2.5
@@ -3642,6 +3648,12 @@ packages:
     resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
     dependencies:
       '@types/node': 20.10.5
+    dev: true
+
+  /@types/debug@4.1.12:
+    resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
+    dependencies:
+      '@types/ms': 0.7.34
     dev: true
 
   /@types/debug@4.1.8:

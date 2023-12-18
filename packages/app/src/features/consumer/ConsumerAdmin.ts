@@ -94,7 +94,11 @@ app.post("/stop", async (c) => {
   const input = ConsumeReq.parse(body);
   const { uuid } = input;
 
-  executor.remove(uuid);
+  const found = await EventSourceMappingService.findByUUID(uuid);
+  if (!found) throw new Error("event source mapping not found");
+
+  const mapping = EventSourceMappingModel.create(found);
+  executor.remove(mapping.display_eventSourceArn);
 
   return c.redirect(indexLocation);
 });

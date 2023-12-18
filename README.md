@@ -42,3 +42,9 @@ fly secrets set SENTRY_DSN=TODO_SENTRY_DSN
 fly scale show
 fly scale count 1
 ```
+
+## debug
+
+```sh
+export DEBUG="karin:*"
+```

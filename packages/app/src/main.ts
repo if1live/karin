@@ -29,10 +29,7 @@ if (settings.NODE_ENV === "development") {
 }
 
 // executor
-executor.main().then(
-  () => {},
-  () => {},
-);
+await executor.subscribe();
 
 // 서버 재시작되면 db를 기본값으로 쓴다
 const founds = await db

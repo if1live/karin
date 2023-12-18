@@ -90,6 +90,25 @@
       </div>
     </p>
 
+    <p>
+      <h3>SQS: SendMessageBatch</h3>
+      <div class="ui mini buttons">
+        <button
+          class="ui button"
+          id="button-karin-send-message-batch"
+          type="button">
+          karin
+        </button>
+        <div class="or"></div>
+        <button
+          class="ui button"
+          id="button-elasticmq-send-message-batch"
+          type="button">
+          elasticmq
+        </button>
+      </div>
+    </p>
+
     <h2>messages</h2>
     <ol id="messages">
       <li>initial</li>
@@ -186,6 +205,14 @@
       handleSendMessage('elasticmq');
     });
 
+    document.querySelector('#button-karin-send-message-batch').addEventListener('click', async (evt) => {
+      handleSendMessageBatch('karin');
+    });
+
+    document.querySelector('#button-elasticmq-send-message-batch').addEventListener('click', async (evt) => {
+      handleSendMessageBatch('elasticmq');
+    });
+
     async function handleSendMessage(target) {
       if (! ws) {
         return;
@@ -202,6 +229,25 @@
         appendMessage(`sqs:${target}`, `send: ${message}, delay=${delay}`);
       } catch(e) {
         appendMessage(`sqs:${target}`, `send: failed`);
+      }
+    }
+
+    async function handleSendMessageBatch(target) {
+      if (! ws) {
+        return;
+      }
+
+      const message = document.querySelector('#textarea-unicast').value || '<BLANK>'
+      const delay = document.querySelector('#input-delay').valueAsNumber;
+
+      try {
+        const url = `/${target}/send-batch?message=${message}&delay=${delay}`;
+        const resp = await fetch(url, {
+          method: 'POST',
+        });
+        appendMessage(`sqs:${target}`, `send-batch: ${message}, delay=${delay}`);
+      } catch(e) {
+        appendMessage(`sqs:${target}`, `send-batch: failed`);
       }
     }
   </script>
