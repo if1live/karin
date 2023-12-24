@@ -9,6 +9,7 @@ describe("InvokeActor#shouldExecute", () => {
     uuid: "uuid",
     queueName: "queueName",
     functionName: "functionName",
+    running: true,
     batchSize: 10,
     startedAt: now,
     executedAt: now,
