@@ -37,6 +37,9 @@ fly secrets set ADMIN_PW=TODO_ADMIN_PW
 
 fly secrets set SENTRY_DSN=TODO_SENTRY_DSN
 
+# debug.
+fly secrets set DEBUG="karin:*"
+
 # machine은 1개만 쓰기
 # worker가 2개 돌면 대기열 처리에서 중복된 메세지 호출이 발생할 수 있다.
 fly scale show

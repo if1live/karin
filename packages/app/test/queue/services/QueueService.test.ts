@@ -81,4 +81,22 @@ describe("QueueService", async () => {
     const result = await s.inspect();
     assert.equal(result.len, 0);
   });
+
+  describe("loadReservedAt", () => {
+    const queueName = faker.string.alphanumeric(10);
+    const s = new QueueService(redis, queueName);
+
+    it("empty", async () => {
+      const actual = await s.loadReservedAt();
+      assert.equal(actual, undefined);
+    });
+
+    it("not empty", async () => {
+      await s.enqueueAsync({ message: message_c, delaySeconds: 2 }, now);
+      await s.enqueueAsync({ message: message_b, delaySeconds: 1 }, now);
+
+      const actual = await s.loadReservedAt();
+      assert.deepEqual(actual, new Date(now.getTime() + 1_000));
+    });
+  });
 });

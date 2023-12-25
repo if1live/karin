@@ -134,6 +134,20 @@ export class QueueService {
     await pipeline.exec();
   }
 
+  /**
+   * 대기열 메세지 기준으로 다음 실행시간 얻기
+   */
+  async loadReservedAt() {
+    const founds = await this.redis.zrange(this.queueKey, 0, 0, "WITHSCORES");
+    if (founds.length <= 0) {
+      return;
+    }
+
+    const [id, ts_reservedStr, ...rest] = founds;
+    const ts_reserved = parseInt(ts_reservedStr ?? "0", 10);
+    return new Date(ts_reserved);
+  }
+
   async purge() {
     return await this.redis.del(this.queueKey);
   }

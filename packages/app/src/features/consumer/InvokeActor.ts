@@ -61,7 +61,6 @@ export class InvokeActor {
 
       const ts_delta = ts_finish - ts_start;
 
-      // 폴링 기반이라서 루프를 더 빠르게 돌아도 IO 부하가 없다.
       let millis = 100 - ts_delta;
       if (millis < 0) {
         millis = 1;
@@ -119,10 +118,11 @@ export class InvokeActor {
     const records = await queue.peek(now, prev.batchSize);
     if (records.length <= 0) {
       logFn(`${now.toISOString()}: no records`);
+      const reservedAt = await queue.loadReservedAt();
       return {
         ...prev,
         executedAt: now,
-        reservedAt: null,
+        reservedAt: reservedAt ?? null,
       };
     }
 
