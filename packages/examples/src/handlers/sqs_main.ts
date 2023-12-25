@@ -11,8 +11,10 @@ export const dispatch: SQSHandler = async (event, context) => {
     return;
   }
 
+  const now = new Date();
+
   const service = new ConnectionService(redis);
-  const body = record.body;
-  const output = await service.broadcast(body);
+  const message = `${now.toISOString()}, ${record.body}`;
+  const output = await service.broadcast(message);
   console.log(`broadcast: ${output.length} connections`);
 };

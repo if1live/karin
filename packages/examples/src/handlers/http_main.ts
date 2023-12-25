@@ -170,7 +170,7 @@ const fn_sqs_sendBatch = async (
     DelaySeconds: delay,
   });
 
-  const entries = [1, 2, 3].map((x): SendMessageBatchRequestEntry => {
+  const entries = ["a", "b"].map((x): SendMessageBatchRequestEntry => {
     return {
       Id: crypto.randomUUID(),
       MessageBody: `${message}-${x}`,
