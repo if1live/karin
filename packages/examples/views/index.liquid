@@ -13,6 +13,16 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer" />
 
+  <!-- https://www.srihash.org/: unpkg을 cdnjs 같은 형태로 만들떄 쓴거 -->
+  <script
+    src="https://unpkg.com/htmx.org@1.9.4"
+    integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+    crossorigin="anonymous"></script>
+  <script
+    src="https://unpkg.com/hyperscript.org@0.9.11"
+    integrity="sha384-SWTvl6gg9wW7CzNqGD9/s3vxwaaKN2g8/eYyu0yT+rkQ/Rb/6NmjnbTi9lYNrpZ1"
+    crossorigin="anonymous"></script>
+
 </head>
 <body>
   <section class="ui text container">
@@ -46,6 +56,25 @@
           type="text"
           id="textarea-unicast"
           value="kakudate karin" />
+
+        <p>
+          <div class="ui mini buttons">
+            <button
+              class="ui button"
+              type="button"
+              _="on click set #textarea-unicast.value to my.innerText">hello</button>
+            <div class="or"></div>
+            <button
+              class="ui button"
+              type="button"
+              _="on click set #textarea-unicast.value to my.innerText">world</button>
+            <div class="or"></div>
+            <button
+              class="ui button"
+              type="button"
+              _="on click set #textarea-unicast.value to 'kakudate karin'">karin</button>
+          </div>
+        </p>
       </div>
 
       <div class="field">
@@ -56,6 +85,25 @@
           min="0"
           max="900"
           value="5" />
+
+        <p>
+          <div class="ui mini buttons">
+            <button
+              class="ui button"
+              type="button"
+              _="on click set #input-delay.value to 0">0s</button>
+            <div class="or"></div>
+            <button
+              class="ui button"
+              type="button"
+              _="on click set #input-delay.value to 5">5s</button>
+            <div class="or"></div>
+            <button
+              class="ui button"
+              type="button"
+              _="on click set #input-delay.value to 10">10s</button>
+          </div>
+        </p>
       </div>
     </form>
 
