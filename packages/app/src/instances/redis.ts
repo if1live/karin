@@ -20,7 +20,7 @@ export const createRedis_mock = async (): Promise<Redis> => {
 };
 
 export const createRedis = async (): Promise<Redis> => {
-  switch (process.env.NODE_ENV) {
+  switch (settings.NODE_ENV) {
     case "production":
       return await createRedis_real();
     case "development":

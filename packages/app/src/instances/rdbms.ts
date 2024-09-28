@@ -32,7 +32,7 @@ export const createKysely = <T>(dialect: Dialect): Kysely<T> => {
 };
 
 const dialect =
-  process.env.NODE_ENV === "test"
+  settings.NODE_ENV === "test"
     ? createDialect(":memory:")
     : createDialect(settings.DATABASE_URL);
 
