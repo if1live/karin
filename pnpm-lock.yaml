@@ -53,9 +53,9 @@ importers:
       liquidjs:
         specifier: ^10.9.4
         version: 10.9.4
-      mysql2:
-        specifier: ^3.6.5
-        version: 3.11.3
+      pg:
+        specifier: ^8.13.0
+        version: 8.13.0
       remeda:
         specifier: ^1.31.0
         version: 1.31.0
@@ -99,6 +99,9 @@ importers:
       '@types/node':
         specifier: ^20.10.5
         version: 20.10.5
+      '@types/pg':
+        specifier: ^8.11.10
+        version: 8.11.10
       better-sqlite3:
         specifier: ^9.2.2
         version: 9.6.0
@@ -1597,6 +1600,9 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
+  '@types/pg@8.11.10':
+    resolution: {integrity: sha512-LczQUW4dbOQzsH2RQ5qoeJ6qJPdrcM/DcMLoqWQkMLMsq83J5lAX3LXjdkWdpscFy67JSOWDnh7Ny/sPFykmkg==}
+
   '@types/readable-stream@4.0.10':
     resolution: {integrity: sha512-AbUKBjcC8SHmImNi4yK2bbjogQlkFSg7shZCcicxPQapniOlajG8GCc39lvXzCWX4lLRRs7DM3VAeSlqmEVZUA==}
 
@@ -1766,10 +1772,6 @@ packages:
   aws-sdk@2.1520.0:
     resolution: {integrity: sha512-HskunOb5K3vJEPgvqwOWw6dsz8YePHfUvzY2bxvIMJ594AgDDjH4D9/dXhBiNVsMkRvCTZENLTjE1kh5ZkAIUQ==}
     engines: {node: '>= 10.0.0'}
-
-  aws-ssl-profiles@1.1.2:
-    resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
-    engines: {node: '>= 6.0.0'}
 
   axios@1.6.2:
     resolution: {integrity: sha512-7i24Ri4pmDRfJTR7LDBhsOTtcm+9kjX5WiY1X3wIisx6G9So3pfMkEiU7emUBe46oceVImccTEM3k6C5dbVW8A==}
@@ -2475,9 +2477,6 @@ packages:
   gauge@1.2.7:
     resolution: {integrity: sha512-fVbU2wRE91yDvKUnrIaQlHKAWKY5e08PmztCrwuH5YVQ+Z/p3d0ny2T48o6uvAAXHIUnfaQdHkmxYbQft1eHVA==}
 
-  generate-function@2.3.1:
-    resolution: {integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==}
-
   get-func-name@2.0.2:
     resolution: {integrity: sha512-8vXOvuE167CtIc3OyItco7N/dpRtBbYOsPsXCz7X/PMnlGjYjSGuZJgM1Y7mmew7BKf9BqvLX2tnOVy1BBUsxQ==}
 
@@ -2521,13 +2520,16 @@ packages:
 
   glob@5.0.15:
     resolution: {integrity: sha512-c9IPMazfRITpmAAKi22dK1VKxGDX9ehhqfABDriL/lzO92xcUKEJPQHrVA/2YHSNFB4iFlykVmWvwo48nr3OxA==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   global-dirs@3.0.1:
     resolution: {integrity: sha512-NBcGGFbBA9s1VzD41QXDG+3++t9Mn5t1FpLdhESY6oKY4gYTFpX4wO3sqGUa0Srjtbfj3szX0RnemmrVRUdULA==}
@@ -2641,10 +2643,6 @@ packages:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
 
-  iconv-lite@0.6.3:
-    resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
-    engines: {node: '>=0.10.0'}
-
   ieee754@1.1.13:
     resolution: {integrity: sha512-4vf7I2LYV/HaWerSo3XmlMkp5eZ83i+/CDluXi/IGTs/O1sejBNhTtnxzmRZfvOUqj7lZjqHkeTvpgSFDlWZTg==}
 
@@ -2676,6 +2674,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -2774,9 +2773,6 @@ packages:
 
   is-promise@2.2.2:
     resolution: {integrity: sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==}
-
-  is-property@1.0.2:
-    resolution: {integrity: sha512-Ks/IoX00TtClbGQr4TWXemAnktAQvYB7HzcCxDGqEZU6oCmb2INHuOoKxbtR+HFkmYWBKv/dOZtGRiAjDhj92g==}
 
   is-stream@1.1.0:
     resolution: {integrity: sha512-uQPm8kcs47jx38atAcWTVxyltQYoPT68y9aWYdV6yWXSyW8mzSat0TL6CiWdZeCdF3KrAvpVtnHbTv4RN+rqdQ==}
@@ -2982,9 +2978,6 @@ packages:
   log@6.3.1:
     resolution: {integrity: sha512-McG47rJEWOkXTDioZzQNydAVvZNeEkSyLJ1VWkFwfW+o1knW+QSi8D1KjPn/TnctV+q99lkvJNe1f0E1IjfY2A==}
 
-  long@5.2.3:
-    resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
-
   loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
 
@@ -3006,10 +2999,6 @@ packages:
 
   lru-queue@0.1.0:
     resolution: {integrity: sha512-BpdYkt9EvGl8OfWHDQPISVpcl5xZthb+XPsbELj5AQXxIC8IriDZIQYjBJPEm5rS420sjZ0TLEzRcq5KdBhYrQ==}
-
-  lru.min@1.1.1:
-    resolution: {integrity: sha512-FbAj6lXil6t8z4z3j0E5mfRlPzxkySotzUHwRXjlpRh10vc6AI6WN62ehZj82VG7M20rqogJ0GLwar2Xa05a8Q==}
-    engines: {bun: '>=1.0.0', deno: '>=1.30.0', node: '>=8.0.0'}
 
   luxon@3.3.0:
     resolution: {integrity: sha512-An0UCfG/rSiqtAIiBPO0Y9/zAnHUZxAMiCpTd5h2smgsj7GGmcenvrvww2cqNA8/4A5ZrD1gJpHN2mIHZQF+Mg==}
@@ -3140,14 +3129,6 @@ packages:
   mute-stream@0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
 
-  mysql2@3.11.3:
-    resolution: {integrity: sha512-Qpu2ADfbKzyLdwC/5d4W7+5Yz7yBzCU05YWt5npWzACST37wJsB23wgOSo00qi043urkiRwXtEvJc9UnuLX/MQ==}
-    engines: {node: '>= 8.0'}
-
-  named-placeholders@1.1.3:
-    resolution: {integrity: sha512-eLoBxg6wE/rZkJPhU/xRX1WTpkFEwDJEN96oxFrTsqBdbT5ec295Q+CoHrL9IT0DipqKhmGcaZmwOt8OON5x1w==}
-    engines: {node: '>=12.0.0'}
-
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -3262,6 +3243,9 @@ packages:
 
   object-inspect@1.13.1:
     resolution: {integrity: sha512-5qoj1RUiKOMsCCNLV1CBiPYE10sziTsnmNxkAI/rZhiD63CF7IqdFGC/XzjWjpSgLf0LxXX3bDFIh0E18f6UhQ==}
+
+  obuf@1.1.2:
+    resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
@@ -3422,6 +3406,48 @@ packages:
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
 
+  pg-cloudflare@1.1.1:
+    resolution: {integrity: sha512-xWPagP/4B6BgFO+EKz3JONXv3YDgvkbVrGw2mTo3D6tVDQRh1e7cqVGvyR3BE+eQgAvx1XhW/iEASj4/jCWl3Q==}
+
+  pg-connection-string@2.7.0:
+    resolution: {integrity: sha512-PI2W9mv53rXJQEOb8xNR8lH7Hr+EKa6oJa38zsK0S/ky2er16ios1wLKhZyxzD7jUReiWokc9WK5nxSnC7W1TA==}
+
+  pg-int8@1.0.1:
+    resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
+    engines: {node: '>=4.0.0'}
+
+  pg-numeric@1.0.2:
+    resolution: {integrity: sha512-BM/Thnrw5jm2kKLE5uJkXqqExRUY/toLHda65XgFTBTFYZyopbKjBe29Ii3RbkvlsMoFwD+tHeGaCjjv0gHlyw==}
+    engines: {node: '>=4'}
+
+  pg-pool@3.7.0:
+    resolution: {integrity: sha512-ZOBQForurqh4zZWjrgSwwAtzJ7QiRX0ovFkZr2klsen3Nm0aoh33Ls0fzfv3imeH/nw/O27cjdz5kzYJfeGp/g==}
+    peerDependencies:
+      pg: '>=8.0'
+
+  pg-protocol@1.7.0:
+    resolution: {integrity: sha512-hTK/mE36i8fDDhgDFjy6xNOG+LCorxLG3WO17tku+ij6sVHXh1jQUJ8hYAnRhNla4QVD2H8er/FOjc/+EgC6yQ==}
+
+  pg-types@2.2.0:
+    resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
+    engines: {node: '>=4'}
+
+  pg-types@4.0.2:
+    resolution: {integrity: sha512-cRL3JpS3lKMGsKaWndugWQoLOCoP+Cic8oseVcbr0qhPzYD5DWXK+RZ9LY9wxRf7RQia4SCwQlXk0q6FCPrVng==}
+    engines: {node: '>=10'}
+
+  pg@8.13.0:
+    resolution: {integrity: sha512-34wkUTh3SxTClfoHB3pQ7bIMvw9dpFU1audQQeZG837fmHfHpr14n/AELVDoOYVDW2h5RDWU78tFjkD+erSBsw==}
+    engines: {node: '>= 8.0.0'}
+    peerDependencies:
+      pg-native: '>=3.0.1'
+    peerDependenciesMeta:
+      pg-native:
+        optional: true
+
+  pgpass@1.0.5:
+    resolution: {integrity: sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==}
+
   picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
@@ -3455,6 +3481,41 @@ packages:
   postcss@8.4.32:
     resolution: {integrity: sha512-D/kj5JNu6oo2EIy+XL/26JEDTlIbB8hw85G8StOE6L74RQAVVP5rej6wxCNqyMbR4RkPfqvezVbPw81Ngd6Kcw==}
     engines: {node: ^10 || ^12 || >=14}
+
+  postgres-array@2.0.0:
+    resolution: {integrity: sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==}
+    engines: {node: '>=4'}
+
+  postgres-array@3.0.2:
+    resolution: {integrity: sha512-6faShkdFugNQCLwucjPcY5ARoW1SlbnrZjmGl0IrrqewpvxvhSLHimCVzqeuULCbG0fQv7Dtk1yDbG3xv7Veog==}
+    engines: {node: '>=12'}
+
+  postgres-bytea@1.0.0:
+    resolution: {integrity: sha512-xy3pmLuQqRBZBXDULy7KbaitYqLcmxigw14Q5sj8QBVLqEwXfeybIKVWiqAXTlcvdvb0+xkOtDbfQMOf4lST1w==}
+    engines: {node: '>=0.10.0'}
+
+  postgres-bytea@3.0.0:
+    resolution: {integrity: sha512-CNd4jim9RFPkObHSjVHlVrxoVQXz7quwNFpz7RY1okNNme49+sVyiTvTRobiLV548Hx/hb1BG+iE7h9493WzFw==}
+    engines: {node: '>= 6'}
+
+  postgres-date@1.0.7:
+    resolution: {integrity: sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q==}
+    engines: {node: '>=0.10.0'}
+
+  postgres-date@2.1.0:
+    resolution: {integrity: sha512-K7Juri8gtgXVcDfZttFKVmhglp7epKb1K4pgrkLxehjqkrgPhfG6OO8LHLkfaqkbpjNRnra018XwAr1yQFWGcA==}
+    engines: {node: '>=12'}
+
+  postgres-interval@1.2.0:
+    resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
+    engines: {node: '>=0.10.0'}
+
+  postgres-interval@3.0.0:
+    resolution: {integrity: sha512-BSNDnbyZCXSxgA+1f5UU2GmwhoI0aU5yMxRGO8CdFEcY2BQF9xm/7MqKnYoM1nJDk8nONNWDk9WeSmePFhQdlw==}
+    engines: {node: '>=12'}
+
+  postgres-range@1.1.4:
+    resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
 
   prebuild-install@7.1.2:
     resolution: {integrity: sha512-UnNke3IQb6sgarcZIDU3gbMeTp/9SSU1DAIkil7PrqG1vZlBtY5msYccSKSHDqa3hNg436IXK+SNImReuA1wEQ==}
@@ -3645,6 +3706,7 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@5.0.5:
@@ -3712,9 +3774,6 @@ packages:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
     engines: {node: '>=10'}
     hasBin: true
-
-  seq-queue@0.0.5:
-    resolution: {integrity: sha512-hr3Wtp/GZIc/6DAGPDcV4/9WoZhjrkXsi5B/07QgX8tsdc6ilr7BFM6PM6rbdAX1kFSDYeZGLipIZZKyQP0O5Q==}
 
   serverless-scriptable-plugin@1.3.1:
     resolution: {integrity: sha512-4GJymuGS506klyZoqJYQ2Qx9mo7M/SPqZyflVB2k1acFCFPdkJ5VIyMf2d3ZMXcVzR+BGOcA/5zwXBjIzjNVRA==}
@@ -3823,10 +3882,6 @@ packages:
   sprintf-kit@2.0.1:
     resolution: {integrity: sha512-2PNlcs3j5JflQKcg4wpdqpZ+AjhQJ2OZEo34NXDtlB0tIPG84xaaXhpA8XFacFiwjKA4m49UOYG83y3hbMn/gQ==}
 
-  sqlstring@2.3.3:
-    resolution: {integrity: sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==}
-    engines: {node: '>= 0.6'}
-
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
@@ -3913,7 +3968,7 @@ packages:
   superagent@7.1.6:
     resolution: {integrity: sha512-gZkVCQR1gy/oUXr+kxJMLDjla434KmSOKbx5iGD30Ql+AkJQ/YlPKECJy2nhqOsHLjGHzoDTXNSjhnvWhzKk7g==}
     engines: {node: '>=6.4.0 <13 || >=14'}
-    deprecated: Please downgrade to v7.1.5 if you need IE/ActiveXObject support OR upgrade to v8.0.0 as we no longer support IE and published an incorrect patch version (see https://github.com/visionmedia/superagent/issues/1731)
+    deprecated: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -6734,6 +6789,12 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
+  '@types/pg@8.11.10':
+    dependencies:
+      '@types/node': 20.10.5
+      pg-protocol: 1.7.0
+      pg-types: 4.0.2
+
   '@types/readable-stream@4.0.10':
     dependencies:
       '@types/node': 20.10.5
@@ -6927,8 +6988,6 @@ snapshots:
       util: 0.12.5
       uuid: 8.0.0
       xml2js: 0.5.0
-
-  aws-ssl-profiles@1.1.2: {}
 
   axios@1.6.2:
     dependencies:
@@ -7773,10 +7832,6 @@ snapshots:
       lodash.padend: 4.6.1
       lodash.padstart: 4.6.1
 
-  generate-function@2.3.1:
-    dependencies:
-      is-property: 1.0.2
-
   get-func-name@2.0.2: {}
 
   get-intrinsic@1.2.2:
@@ -7974,10 +8029,6 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  iconv-lite@0.6.3:
-    dependencies:
-      safer-buffer: 2.1.2
-
   ieee754@1.1.13: {}
 
   ieee754@1.2.1: {}
@@ -8102,8 +8153,6 @@ snapshots:
   is-plain-obj@1.1.0: {}
 
   is-promise@2.2.2: {}
-
-  is-property@1.0.2: {}
 
   is-stream@1.1.0: {}
 
@@ -8305,8 +8354,6 @@ snapshots:
       type: 2.7.2
       uni-global: 1.0.0
 
-  long@5.2.3: {}
-
   loupe@2.3.7:
     dependencies:
       get-func-name: 2.0.2
@@ -8324,8 +8371,6 @@ snapshots:
   lru-queue@0.1.0:
     dependencies:
       es5-ext: 0.10.62
-
-  lru.min@1.1.1: {}
 
   luxon@3.3.0: {}
 
@@ -8460,22 +8505,6 @@ snapshots:
 
   mute-stream@0.0.8: {}
 
-  mysql2@3.11.3:
-    dependencies:
-      aws-ssl-profiles: 1.1.2
-      denque: 2.1.0
-      generate-function: 2.3.1
-      iconv-lite: 0.6.3
-      long: 5.2.3
-      lru.min: 1.1.1
-      named-placeholders: 1.1.3
-      seq-queue: 0.0.5
-      sqlstring: 2.3.3
-
-  named-placeholders@1.1.3:
-    dependencies:
-      lru-cache: 7.18.3
-
   nanoid@3.3.7: {}
 
   napi-build-utils@1.0.2: {}
@@ -8588,6 +8617,8 @@ snapshots:
   object-hash@3.0.0: {}
 
   object-inspect@1.13.1: {}
+
+  obuf@1.1.2: {}
 
   once@1.4.0:
     dependencies:
@@ -8736,6 +8767,53 @@ snapshots:
 
   pend@1.2.0: {}
 
+  pg-cloudflare@1.1.1:
+    optional: true
+
+  pg-connection-string@2.7.0: {}
+
+  pg-int8@1.0.1: {}
+
+  pg-numeric@1.0.2: {}
+
+  pg-pool@3.7.0(pg@8.13.0):
+    dependencies:
+      pg: 8.13.0
+
+  pg-protocol@1.7.0: {}
+
+  pg-types@2.2.0:
+    dependencies:
+      pg-int8: 1.0.1
+      postgres-array: 2.0.0
+      postgres-bytea: 1.0.0
+      postgres-date: 1.0.7
+      postgres-interval: 1.2.0
+
+  pg-types@4.0.2:
+    dependencies:
+      pg-int8: 1.0.1
+      pg-numeric: 1.0.2
+      postgres-array: 3.0.2
+      postgres-bytea: 3.0.0
+      postgres-date: 2.1.0
+      postgres-interval: 3.0.0
+      postgres-range: 1.1.4
+
+  pg@8.13.0:
+    dependencies:
+      pg-connection-string: 2.7.0
+      pg-pool: 3.7.0(pg@8.13.0)
+      pg-protocol: 1.7.0
+      pg-types: 2.2.0
+      pgpass: 1.0.5
+    optionalDependencies:
+      pg-cloudflare: 1.1.1
+
+  pgpass@1.0.5:
+    dependencies:
+      split2: 4.2.0
+
   picocolors@1.0.0: {}
 
   picomatch@2.3.1: {}
@@ -8765,6 +8843,28 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
+
+  postgres-array@2.0.0: {}
+
+  postgres-array@3.0.2: {}
+
+  postgres-bytea@1.0.0: {}
+
+  postgres-bytea@3.0.0:
+    dependencies:
+      obuf: 1.1.2
+
+  postgres-date@1.0.7: {}
+
+  postgres-date@2.1.0: {}
+
+  postgres-interval@1.2.0:
+    dependencies:
+      xtend: 4.0.2
+
+  postgres-interval@3.0.0: {}
+
+  postgres-range@1.1.4: {}
 
   prebuild-install@7.1.2:
     dependencies:
@@ -9030,8 +9130,6 @@ snapshots:
     dependencies:
       lru-cache: 6.0.0
 
-  seq-queue@0.0.5: {}
-
   serverless-scriptable-plugin@1.3.1:
     dependencies:
       bluebird: 3.7.2
@@ -9212,8 +9310,6 @@ snapshots:
   sprintf-kit@2.0.1:
     dependencies:
       es5-ext: 0.10.62
-
-  sqlstring@2.3.3: {}
 
   stackback@0.0.2: {}
 

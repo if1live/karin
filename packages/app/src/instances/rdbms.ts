@@ -2,12 +2,11 @@ import {
   CamelCasePlugin,
   Dialect,
   Kysely,
-  MysqlDialect,
   ParseJSONResultsPlugin,
+  PostgresDialect,
   SqliteDialect,
 } from "kysely";
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
-import { ConnectionOptions, PoolOptions } from "mysql2";
 import * as settings from "../settings.js";
 import { DB } from "../tables/index.js";
 
@@ -21,33 +20,24 @@ const createDialect_sqlite: DialectFn = async () => {
   });
 };
 
-const createDialect_mysql: DialectFn = async () => {
-  const { default: Mysql } = await import("mysql2");
+const createDialect_postgres: DialectFn = async () => {
+  const { Pool } = await import("pg");
 
   const url = new URL(settings.DATABASE_URL);
-
-  // planetscale 연결할때 필요한 설정
-  const isPlanetScale = url.hostname?.includes(".psdb.");
-  const ssl: ConnectionOptions["ssl"] = isPlanetScale
-    ? { rejectUnauthorized: true }
-    : undefined;
 
   const isAwsLambda = !!process.env.LAMBDA_TASK_ROOT;
   const connectionLimit = isAwsLambda ? 1 : 5;
 
-  const pool = Mysql.createPool({
+  const pool = new Pool({
     database: url.pathname.replace("/", ""),
     host: url.hostname,
     user: url.username,
     password: url.password,
     port: url.port !== "" ? parseInt(url.port, 10) : undefined,
-    connectionLimit,
-    charset: "utf8mb4",
-    timezone: "+00:00",
-    ssl,
+    max: connectionLimit,
   });
 
-  return new MysqlDialect({
+  return new PostgresDialect({
     pool: pool,
   });
 };
@@ -56,7 +46,7 @@ export const selectDialect = (): (() => Promise<Dialect>) => {
   switch (settings.NODE_ENV) {
     case "development":
     case "production":
-      return createDialect_mysql;
+      return createDialect_postgres;
     case "test":
       return createDialect_sqlite;
     default:

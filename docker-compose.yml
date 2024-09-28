@@ -1,15 +1,14 @@
 version: "3"
 
 services:
-  mysql:
-    image: mysql:8.0-debian
+  postgres:
+    image: postgres:15-alpine
     environment:
-      MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_USER: localhost_dev
-      MYSQL_PASSWORD: localhost_dev
-      MYSQL_DATABASE: localhost_dev
+      POSTGRES_DB: localhost_dev
+      POSTGRES_USER: localhost_dev
+      POSTGRES_PASSWORD: localhost_dev
     ports:
-      - 3306:3306
+      - 5432:5432
 
   redis:
     image: redis:7.2-alpine
