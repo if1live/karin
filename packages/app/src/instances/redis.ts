@@ -20,9 +20,18 @@ export const createRedis_mock = async (): Promise<Redis> => {
 };
 
 export const createRedis = async (): Promise<Redis> => {
-  return process.env.NODE_ENV === "test"
-    ? await createRedis_mock()
-    : await createRedis_real();
+  switch (process.env.NODE_ENV) {
+    case "production":
+      return await createRedis_real();
+    case "development":
+      return await createRedis_mock();
+    case "test":
+      return await createRedis_mock();
+    default:
+      throw new Error("unknown redis NODE_ENV", {
+        cause: { NODE_ENV: settings.NODE_ENV },
+      });
+  }
 };
 
 export const redis = await createRedis();

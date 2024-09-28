@@ -5,7 +5,10 @@ import { executor } from "./features/consumer/ConsumerExecutor.js";
 import { EventSourceMappingModel } from "./features/lookup/models.js";
 import { db } from "./instances/rdbms.js";
 import * as settings from "./settings.js";
-import { tableName_EventSourceMapping } from "./tables/types.js";
+import {
+  createSQLiteSchema,
+  tableName_EventSourceMapping,
+} from "./tables/index.js";
 
 if (settings.SENTRY_DSN) {
   Sentry.init({
@@ -27,6 +30,9 @@ async function main_livereload() {
 if (settings.NODE_ENV === "development") {
   await main_livereload();
 }
+
+// db 준비
+await createSQLiteSchema(db);
 
 // executor
 await executor.subscribe();

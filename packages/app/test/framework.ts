@@ -1,49 +1,16 @@
 import { CamelCasePlugin, Kysely, ParseJSONResultsPlugin } from "kysely";
 import { TablePrefixPlugin } from "kysely-plugin-prefix";
-import { selectDialect } from "../src/instances/rdbms.js";
-import { DB } from "../src/tables/index.js";
+import { createDialect } from "../src/instances/index.js";
+import { DB, createSQLiteSchema } from "../src/tables/index.js";
 import {
   tableName_EventSourceMapping,
   tableName_FunctionDefinition,
   tableName_FunctionUrl,
-} from "../src/tables/types.js";
-
-const prepare_functionDefinition = async (db: Kysely<DB>) => {
-  await db.schema
-    .createTable(tableName_FunctionDefinition)
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-    .addColumn("functionName", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("functionArn", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("payload", "json", (col) => col.notNull())
-    .execute();
-};
-
-const prepare_functionUrl = async (db: Kysely<DB>) => {
-  await db.schema
-    .createTable(tableName_FunctionUrl)
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-    .addColumn("functionArn", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("functionUrl", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("payload", "json", (col) => col.notNull())
-    .execute();
-};
-
-const prepare_eventSourceMapping = async (db: Kysely<DB>) => {
-  await db.schema
-    .createTable(tableName_EventSourceMapping)
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-    .addColumn("uuid", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("eventSourceArn", "varchar(255)", (col) =>
-      col.notNull().unique(),
-    )
-    .addColumn("functionArn", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("payload", "json", (col) => col.notNull())
-    .execute();
-};
+} from "../src/tables/index.js";
 
 export const TestDatabase = {
   async prepare(): Promise<Kysely<DB>> {
-    const dialect = await selectDialect()();
+    const dialect = createDialect(":memory:");
     return new Kysely<DB>({
       dialect,
       plugins: [
@@ -55,9 +22,7 @@ export const TestDatabase = {
     });
   },
   async create(db: Kysely<DB>) {
-    await prepare_functionDefinition(db);
-    await prepare_functionUrl(db);
-    await prepare_eventSourceMapping(db);
+    await createSQLiteSchema(db);
   },
   async destroy(db: Kysely<DB>) {
     const tables = [

@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-lambda";
 import { lambdaClient } from "../../../instances/aws.js";
 import { db } from "../../../instances/rdbms.js";
-import { tableName_EventSourceMapping } from "../../../tables/types.js";
+import { tableName_EventSourceMapping } from "../../../tables/index.js";
 
 const table = tableName_EventSourceMapping;
 

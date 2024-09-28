@@ -8,7 +8,7 @@ import {
   sql,
 } from "kysely";
 import { afterAll, beforeAll, describe, it } from "vitest";
-import { createKysely, selectDialect } from "../../src/instances/rdbms.js";
+import { createDialect, createKysely } from "../../src/instances/rdbms.js";
 import { Timestamp } from "../../src/tables/index.js";
 
 /**
@@ -78,7 +78,7 @@ interface Database {
 }
 
 describe("rdbms", async () => {
-  const dialect = await selectDialect()();
+  const dialect = createDialect(":memory:");
   // 플러그인으로 테스트 꺠지는거 피하려고 직접 객체 만듬
   const db = new Kysely<Database>({
     dialect,

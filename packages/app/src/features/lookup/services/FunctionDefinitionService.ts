@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/client-lambda";
 import * as R from "remeda";
 import { db, lambdaClient } from "../../../instances/index.js";
-import { tableName_FunctionDefinition } from "../../../tables/types.js";
+import { tableName_FunctionDefinition } from "../../../tables/index.js";
 
 const table = tableName_FunctionDefinition;
 

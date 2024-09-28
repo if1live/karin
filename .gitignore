@@ -204,3 +204,4 @@ terraform.rc
 
 ## custom
 artifact/
+sqlite.db
