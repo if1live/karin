@@ -1,5 +1,14 @@
 {% layout "layouts/base_admin.liquid" %}
 
 {% block content %}
-  <h1>TODO: admin</h1>
+  <h1>http</h1>
+  <ul>
+    {% for entry in entries %}
+      <li>
+        <a href="{{ entry.url.functionUrl }}">
+          {{ entry.definition.functionName }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}

@@ -7,6 +7,7 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { consumerAdmin } from "./features/consumer/index.js";
 import { lookupAdmin, lookupController } from "./features/lookup/index.js";
+import { LookupService } from "./features/lookup/services/LookupService.js";
 import {
   queueAdmin,
   queueApi,
@@ -98,7 +99,10 @@ app.get(`${prefix_site}/`, async (c) => {
 // 운영 최상위
 app.get(`${prefix_admin}`, async (c) => c.redirect(`${prefix_admin}/`));
 app.get(`${prefix_admin}/`, async (c) => {
-  const text = await engine.renderFile("admin/index", {});
+  const founds = await LookupService.load();
+  const text = await engine.renderFile("admin/index", {
+    entries: founds,
+  });
   return c.html(text);
 });
 
