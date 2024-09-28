@@ -1,5 +1,5 @@
-ARG BUILDER_IMAGE="node:20-bullseye"
-ARG RUNNER_IMAGE="node:20-alpine"
+ARG BUILDER_IMAGE="node:22-bullseye"
+ARG RUNNER_IMAGE="node:22-alpine"
 
 FROM ${BUILDER_IMAGE} as builder
 
