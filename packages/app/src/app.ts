@@ -100,8 +100,9 @@ app.get(`${prefix_site}/`, async (c) => {
 app.get(`${prefix_admin}`, async (c) => c.redirect(`${prefix_admin}/`));
 app.get(`${prefix_admin}/`, async (c) => {
   const founds = await LookupService.load();
+  const entries = founds.filter((x) => x.url);
   const text = await engine.renderFile("admin/index", {
-    entries: founds,
+    entries,
   });
   return c.html(text);
 });
