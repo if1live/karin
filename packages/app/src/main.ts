@@ -21,7 +21,7 @@ async function main_livereload() {
     },
     () => console.log("livereload running..."),
   );
-  liveServer.watch([settings.rootPath, settings.viewPath]);
+  liveServer.watch([settings.viewPath]);
 }
 
 if (settings.NODE_ENV === "development") {
